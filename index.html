@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-950 text-slate-100 scroll-smooth">
+<html lang="id" class="h-full bg-slate-950 text-slate-100">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COALSAFE 360 - Enterprise Mine HSE & Safety System</title>
+  <title>COALSAFE 360 - Enterprise Mine HSE System</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -26,7 +26,7 @@
     <div>
       <!-- Brand Logo -->
       <div class="p-5 border-b border-slate-800 flex items-center space-x-3 bg-gradient-to-r from-amber-500/10 to-transparent">
-        <div class="bg-amber-500 text-slate-950 p-2.5 rounded-lg shadow-lg shadow-amber-500/20 font-bold flex items-center justify-center">
+        <div class="bg-amber-500 text-slate-950 p-2 rounded-lg shadow-lg shadow-amber-500/20 font-bold flex items-center justify-center">
           <i data-lucide="shield-alert" class="w-6 h-6"></i>
         </div>
         <div>
@@ -35,20 +35,24 @@
         </div>
       </div>
 
-      <!-- Navigation Links -->
-      <nav class="p-4 space-y-2 text-sm">
-        <a href="#top-dashboard" class="nav-item flex items-center space-x-3 px-3.5 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-medium border-l-4 border-amber-500 transition">
+      <!-- Navigation Links (4 MENU UTAMA) -->
+      <nav class="p-4 space-y-2 text-sm" id="sidebar-nav">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-medium border-l-4 border-amber-500 transition">
           <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
           <span>Dashboard K3</span>
-        </a>
-        <a href="#form-section" class="nav-item flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition">
+        </button>
+        <button onclick="switchTab('lapor')" id="nav-lapor" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition">
           <i data-lucide="file-plus" class="w-5 h-5"></i>
           <span>Lapor Bahaya (Hazard)</span>
-        </a>
-        <a href="#table-section" class="nav-item flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition">
+        </button>
+        <button onclick="switchTab('verifikasi')" id="nav-verifikasi" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition">
           <i data-lucide="clipboard-check" class="w-5 h-5"></i>
           <span>Verifikasi & CAPA</span>
-        </a>
+        </button>
+        <button onclick="switchTab('inspeksi')" id="nav-inspeksi" class="nav-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition">
+          <i data-lucide="truck" class="w-5 h-5"></i>
+          <span>Inspeksi Alat Berat</span>
+        </button>
       </nav>
     </div>
 
@@ -67,10 +71,10 @@
   </aside>
 
   <!-- ================= MAIN CONTENT AREA ================= -->
-  <div id="mainContent" class="flex-1 flex flex-col h-full overflow-y-auto bg-slate-950 scroll-smooth">
+  <div class="flex-1 flex flex-col h-full overflow-y-auto bg-slate-950">
     
-    <!-- Top Header Bar -->
-    <header id="top-dashboard" class="bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
+    <!-- Header Bar -->
+    <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
       <div>
         <h2 class="text-lg font-bold font-tech text-slate-100 flex items-center gap-2">
           <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -86,187 +90,172 @@
       </div>
     </header>
 
-    <main class="p-6 space-y-8 max-w-7xl mx-auto w-full">
+    <main class="p-6 max-w-7xl mx-auto w-full flex-1">
 
-      <!-- ================= STATS OVERVIEW CARDS ================= -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
-          <div class="p-3 bg-red-500/10 text-red-400 rounded-xl border border-red-500/20">
-            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      <!-- ================= PAGE 1: DASHBOARD K3 ================= -->
+      <div id="page-dashboard" class="space-y-6">
+        <!-- STATS CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
+            <div class="p-3 bg-red-500/10 text-red-400 rounded-xl border border-red-500/20">
+              <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 uppercase font-medium">Laporan Masuk</p>
+              <h3 class="text-2xl font-bold font-tech text-slate-100" id="stat-total">0</h3>
+            </div>
           </div>
-          <div>
-            <p class="text-xs text-slate-400 uppercase font-medium">Laporan Masuk</p>
-            <h3 class="text-2xl font-bold font-tech text-slate-100" id="stat-total">0</h3>
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
+            <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+              <i data-lucide="clock" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 uppercase font-medium">Pending Review</p>
+              <h3 class="text-2xl font-bold font-tech text-amber-400" id="stat-pending">0</h3>
+            </div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
+            <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+              <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 uppercase font-medium">Tindakan Selesai</p>
+              <h3 class="text-2xl font-bold font-tech text-emerald-400" id="stat-resolved">0</h3>
+            </div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
+            <div class="p-3 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
+              <i data-lucide="shield-x" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 uppercase font-medium">Bahaya Tinggi</p>
+              <h3 class="text-2xl font-bold font-tech text-rose-500" id="stat-critical">0</h3>
+            </div>
           </div>
         </div>
-        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
-          <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
-            <i data-lucide="clock" class="w-6 h-6"></i>
+
+        <!-- RECENT FEED IN DASHBOARD -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+            <h3 class="text-base font-bold font-tech text-slate-100 flex items-center gap-2">
+              <i data-lucide="activity" class="w-5 h-5 text-amber-500"></i>
+              FEED TEMUAN K3 TERKINI
+            </h3>
+            <button onclick="switchTab('lapor')" class="text-xs text-amber-400 hover:underline flex items-center gap-1">+ Buat Laporan</button>
           </div>
-          <div>
-            <p class="text-xs text-slate-400 uppercase font-medium">Pending Review</p>
-            <h3 class="text-2xl font-bold font-tech text-amber-400" id="stat-pending">0</h3>
-          </div>
-        </div>
-        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
-          <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
-            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-400 uppercase font-medium">Tindakan Selesai</p>
-            <h3 class="text-2xl font-bold font-tech text-emerald-400" id="stat-resolved">0</h3>
-          </div>
-        </div>
-        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
-          <div class="p-3 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
-            <i data-lucide="shield-x" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-400 uppercase font-medium">Bahaya Tinggi</p>
-            <h3 class="text-2xl font-bold font-tech text-rose-500" id="stat-critical">0</h3>
+          <div id="hazardFeed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="text-center col-span-full py-10 text-slate-500 text-xs">Memuat data dari Supabase...</div>
           </div>
         </div>
       </div>
 
-      <!-- ================= MAIN SECTION: FORM & FEED ================= -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 scroll-mt-24" id="form-section">
-        
-        <!-- FORM INPUT LAPORAN (7 KOLOM) -->
-        <div class="lg:col-span-7 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-6">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+      <!-- ================= PAGE 2: FORM LAPOR BAHAYA ================= -->
+      <div id="page-lapor" class="hidden max-w-3xl mx-auto bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="text-lg font-bold font-tech text-amber-400 flex items-center gap-2">
+              <i data-lucide="file-warning" class="w-5 h-5"></i>
+              FORMULIR LAPORAN BAHAYA & K3 LAPANGAN
+            </h3>
+            <p class="text-xs text-slate-400">Isi detail pengamatan bahaya K3/LH di area operasional tambang.</p>
+          </div>
+          <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2.5 py-1 rounded">SOP-HSE-04</span>
+        </div>
+
+        <form id="hseForm" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 class="text-lg font-bold font-tech text-amber-400 flex items-center gap-2">
-                <i data-lucide="file-warning" class="w-5 h-5"></i>
-                FORMULIR LAPORAN BAHAYA & K3 LAPANGAN
-              </h3>
-              <p class="text-xs text-slate-400">Isi detail pengamatan bahaya K3/LH di area operasional tambang.</p>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Pelapor / Pekerja *</label>
+              <input type="text" id="reporter_name" required placeholder="Contoh: Budi Santoso" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
             </div>
-            <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2.5 py-1 rounded">SOP-HSE-04</span>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">NIP / Badge ID Tambang *</label>
+              <input type="text" id="badge_id" required placeholder="Contoh: ID-88492" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+            </div>
           </div>
 
-          <form id="hseForm" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Pelapor / Pekerja *</label>
-                <input type="text" id="reporter_name" required placeholder="Contoh: Budi Santoso" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">NIP / Badge ID Tambang *</label>
-                <input type="text" id="badge_id" required placeholder="Contoh: ID-88492" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Shift Kerja *</label>
-                <select id="shift" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-                  <option value="Shift 1 (Siang 06.00 - 18.00)">Shift 1 (Day)</option>
-                  <option value="Shift 2 (Malam 18.00 - 06.00)">Shift 2 (Night)</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Area / Pit Tambang *</label>
-                <select id="location_area" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-                  <option value="Pit Alpha - Mining Front">Pit Alpha - Mining Front</option>
-                  <option value="Pit Bravo - Disposal Area">Pit Bravo - Disposal Area</option>
-                  <option value="Hauling Road (Jalan Angkut)">Hauling Road (Jalan Angkut)</option>
-                  <option value="Stockpile Batu Bara">Stockpile Batu Bara</option>
-                  <option value="Port Jetty & Conveyor">Port Jetty & Conveyor</option>
-                  <option value="Workshop Alat Berat">Workshop Alat Berat</option>
-                  <option value="Mess & Kantin Karyawan">Mess & Kantin Karyawan</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Waktu Pengamatan *</label>
-                <input type="datetime-local" id="incident_time" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Kategori Bahaya *</label>
-                <select id="hazard_category" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-                  <option value="Unsafe Act (Tindakan Tidak Aman)">Unsafe Act (Tindakan Tidak Aman)</option>
-                  <option value="Unsafe Condition (Kondisi Tidak Aman)">Unsafe Condition (Kondisi Tidak Aman)</option>
-                  <option value="Near Miss (Hampir Celaka)">Near Miss (Hampir Celaka)</option>
-                  <option value="Kerusakan Alat Berat (Property Damage)">Kerusakan Alat Berat</option>
-                  <option value="Tumpahan B3/Lingkungan (Environmental)">Tumpahan B3 / Lingkungan</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Tingkat Risiko (Risk Level) *</label>
-                <select id="risk_level" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition font-medium">
-                  <option value="Rendah (Low)" class="text-emerald-400">🟢 Rendah (Low)</option>
-                  <option value="Sedang (Medium)" class="text-amber-400">🟡 Sedang (Medium)</option>
-                  <option value="Tinggi (High)" class="text-orange-400">🟠 Tinggi (High)</option>
-                  <option value="Kritis / Stop Work (Extreme)" class="text-red-500">🔴 Kritis / Stop Work (Extreme)</option>
-                </select>
-              </div>
-            </div>
-
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1">Kronologi / Deskripsi Pengamatan Bahaya *</label>
-              <textarea id="description" rows="3" required placeholder="Jelaskan detail bahaya (misal: Tanggul jalan hauling longsor, pengemudi DT tidak pakai APD, dll)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition"></textarea>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Shift Kerja *</label>
+              <select id="shift" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                <option value="Shift 1 (Siang 06.00 - 18.00)">Shift 1 (Day)</option>
+                <option value="Shift 2 (Malam 18.00 - 06.00)">Shift 2 (Night)</option>
+              </select>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Tindakan Langsung Yang Diambil</label>
-                <input type="text" id="immediate_action" placeholder="Contoh: Memasang barikade / Menegur driver" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">URL Foto Bukti Temuan (Opsional)</label>
-                <input type="url" id="image_url" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-              </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Area / Pit Tambang *</label>
+              <select id="location_area" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                <option value="Pit Alpha - Mining Front">Pit Alpha - Mining Front</option>
+                <option value="Pit Bravo - Disposal Area">Pit Bravo - Disposal Area</option>
+                <option value="Hauling Road (Jalan Angkut)">Hauling Road (Jalan Angkut)</option>
+                <option value="Stockpile Batu Bara">Stockpile Batu Bara</option>
+                <option value="Port Jetty & Conveyor">Port Jetty & Conveyor</option>
+                <option value="Workshop Alat Berat">Workshop Alat Berat</option>
+              </select>
             </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Waktu Pengamatan *</label>
+              <input type="datetime-local" id="incident_time" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+            </div>
+          </div>
 
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Kategori Bahaya *</label>
+              <select id="hazard_category" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+                <option value="Unsafe Act (Tindakan Tidak Aman)">Unsafe Act (Tindakan Tidak Aman)</option>
+                <option value="Unsafe Condition (Kondisi Tidak Aman)">Unsafe Condition (Kondisi Tidak Aman)</option>
+                <option value="Near Miss (Hampir Celaka)">Near Miss (Hampir Celaka)</option>
+                <option value="Kerusakan Alat Berat">Kerusakan Alat Berat</option>
+                <option value="Tumpahan B3 / Lingkungan">Tumpahan B3 / Lingkungan</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Tingkat Risiko (Risk Level) *</label>
+              <select id="risk_level" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition font-medium">
+                <option value="Rendah (Low)">🟢 Rendah (Low)</option>
+                <option value="Sedang (Medium)">🟡 Sedang (Medium)</option>
+                <option value="Tinggi (High)">🟠 Tinggi (High)</option>
+                <option value="Kritis / Stop Work (Extreme)">🔴 Kritis / Stop Work (Extreme)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Kronologi / Deskripsi Bahaya *</label>
+            <textarea id="description" rows="3" required placeholder="Jelaskan detail bahaya K3 yang kamu temukan di lapangan..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Tindakan Langsung Yang Diambil</label>
+              <input type="text" id="immediate_action" placeholder="Contoh: Pasang barikade / Tegur driver" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
+            </div>
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1">Supervisor Area Penanggung Jawab *</label>
-              <input type="text" id="supervisor_assigned" required placeholder="Nama Supervisor / Superintendent Area" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
-            </div>
-
-            <button type="submit" id="btnSubmit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold font-tech text-base py-3 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center space-x-2 cursor-pointer">
-              <i data-lucide="send" class="w-5 h-5"></i>
-              <span>KIRIM LAPORAN K3 KE TIM HSE</span>
-            </button>
-          </form>
-        </div>
-
-        <!-- RECENT HAZARD FEED CARD (5 KOLOM) -->
-        <div class="lg:col-span-5 bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
-              <h3 class="text-base font-bold font-tech text-slate-100 flex items-center gap-2">
-                <i data-lucide="activity" class="w-5 h-5 text-amber-500"></i>
-                FEED TEMUAN K3 TERKINI
-              </h3>
-              <span class="text-xs text-slate-400">Live Update</span>
-            </div>
-
-            <div id="hazardFeed" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-              <div class="text-center py-10 text-slate-500 text-xs">Mengambil data dari Supabase...</div>
+              <input type="text" id="supervisor_assigned" required placeholder="Nama Supervisor Area" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
             </div>
           </div>
 
-          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-500 text-center">
-            Sistem terintegrasi langsung dengan database Supabase PostgreSQL Site Tambang.
-          </div>
-        </div>
-
+          <button type="submit" id="btnSubmit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold font-tech text-base py-3 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center space-x-2 cursor-pointer">
+            <i data-lucide="send" class="w-5 h-5"></i>
+            <span>KIRIM LAPORAN K3</span>
+          </button>
+        </form>
       </div>
 
-      <!-- ================= TABLE SECTION: REVIU & TUNTAS BAHAYA ================= -->
-      <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 space-y-4 scroll-mt-24" id="table-section">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <!-- ================= PAGE 3: VERIFIKASI & CAPA ================= -->
+      <div id="page-verifikasi" class="hidden space-y-4 bg-slate-900 rounded-2xl border border-slate-800 p-6">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
           <div>
             <h3 class="text-lg font-bold font-tech text-slate-100 flex items-center gap-2">
               <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
-              VERIFIKASI & PERBAIKAN (CAPA - CORRECTIVE ACTION)
+              VERIFIKASI & PERBAIKAN (CAPA)
             </h3>
-            <p class="text-xs text-slate-400">Monitor status dan tindak lanjuti laporan bahaya K3 oleh HSE Supervisor.</p>
+            <p class="text-xs text-slate-400">Tindak lanjuti dan selesaikan laporan bahaya yang terdaftar.</p>
           </div>
-          <button onclick="loadHseData()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition flex items-center gap-2 self-start cursor-pointer">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh Data
+          <button onclick="loadHseData()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition flex items-center gap-2">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
           </button>
         </div>
 
@@ -274,44 +263,90 @@
           <table class="w-full text-left text-xs text-slate-300">
             <thead class="bg-slate-950 text-slate-400 font-tech uppercase tracking-wider border-b border-slate-800">
               <tr>
-                <th class="p-3.5">Waktu & Pelapor</th>
-                <th class="p-3.5">Lokasi & Area</th>
-                <th class="p-3.5">Kategori & Risiko</th>
-                <th class="p-3.5">Detail Bahaya</th>
-                <th class="p-3.5">Supervisor</th>
+                <th class="p-3.5">Pelapor</th>
+                <th class="p-3.5">Area</th>
+                <th class="p-3.5">Bahaya & Risiko</th>
+                <th class="p-3.5">Deskripsi</th>
                 <th class="p-3.5 text-center">Status</th>
                 <th class="p-3.5 text-center">Aksi HSE</th>
               </tr>
             </thead>
             <tbody id="tableBody" class="divide-y divide-slate-800/60 font-normal">
-              <tr>
-                <td colspan="7" class="p-6 text-center text-slate-500">Belum ada data laporan K3.</td>
-              </tr>
+              <tr><td colspan="6" class="p-6 text-center text-slate-500">Memuat data...</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- ================= PAGE 4: INSPEKSI ALAT BERAT ================= -->
+      <div id="page-inspeksi" class="hidden space-y-6">
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center space-y-4">
+          <div class="w-16 h-16 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto">
+            <i data-lucide="truck" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-xl font-bold font-tech text-slate-100">INSPEKSI ALAT BERAT & FLEET MANAGEMENT</h3>
+          <p class="text-xs text-slate-400 max-w-md mx-auto">Modul P2H (Pelaksanaan Pemeriksaan Harian) Dump Truck, Excavator, Bulldozer, dan Wheel Loader Tambang.</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-left">
+              <p class="text-xs text-slate-400">Total Unit Aktif</p>
+              <h4 class="text-2xl font-bold font-tech text-amber-400">42 Unit</h4>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-left">
+              <p class="text-xs text-slate-400">P2H Lolos (Fit)</p>
+              <h4 class="text-2xl font-bold font-tech text-emerald-400">38 Unit</h4>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-left">
+              <p class="text-xs text-slate-400">Breakdown / Stop Work</p>
+              <h4 class="text-2xl font-bold font-tech text-rose-500">4 Unit</h4>
+            </div>
+          </div>
         </div>
       </div>
 
     </main>
   </div>
 
-  <!-- ================= SUPABASE & JAVASCRIPT LOGIC ================= -->
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // 1. SUPABASE CONFIGURATION
+    // 1. KONEKSI SUPABASE
     const SUPABASE_URL = 'https://ztgjmyjrtrlyrgntvtny.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_GGh8txjx_3OFYwmTGdccjQ_zkxRYqep';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Set Default Waktu Ke Sekarang
+    // Set Default Tanggal
     document.getElementById('incident_time').value = new Date().toISOString().slice(0, 16);
 
-    // 2. SUBMIT FORM HANDLER
+    // 2. NAVIGASI TAB SIMULTAN (MULTI-PAGE SYSTEM)
+    function switchTab(tabName) {
+      // Sembunyikan Semua Halaman
+      ['dashboard', 'lapor', 'verifikasi', 'inspeksi'].forEach(page => {
+        document.getElementById(`page-${page}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-${page}`);
+        if(btn) {
+          btn.className = "nav-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition";
+        }
+      });
+
+      // Munculkan Halaman Yang Dipilih
+      document.getElementById(`page-${tabName}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-${tabName}`);
+      if(activeBtn) {
+        activeBtn.className = "nav-btn w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-medium border-l-4 border-amber-500 transition";
+      }
+
+      if(tabName === 'dashboard' || tabName === 'verifikasi') {
+        loadHseData();
+      }
+    }
+
+    // 3. SUBMIT FORM HANDLER
     document.getElementById('hseForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const btn = document.getElementById('btnSubmit');
       btn.disabled = true;
-      btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span>MENGIRIM LAPORAN...</span>`;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span>MENGIRIM...</span>`;
       lucide.createIcons();
 
       const payload = {
@@ -324,7 +359,6 @@
         risk_level: document.getElementById('risk_level').value,
         description: document.getElementById('description').value,
         immediate_action: document.getElementById('immediate_action').value || 'Tidak Ada',
-        image_url: document.getElementById('image_url').value || null,
         supervisor_assigned: document.getElementById('supervisor_assigned').value,
         status: 'PENDING'
       };
@@ -337,7 +371,7 @@
         Swal.fire({
           icon: 'success',
           title: 'Laporan K3 Berhasil Terkirim!',
-          text: 'Notifikasi bahaya telah diteruskan ke Supervisor HSE Area.',
+          text: 'Data telah masuk ke Dashboard & Supabase.',
           background: '#0f172a',
           color: '#f8fafc',
           confirmButtonColor: '#f59e0b'
@@ -345,26 +379,28 @@
 
         document.getElementById('hseForm').reset();
         document.getElementById('incident_time').value = new Date().toISOString().slice(0, 16);
-        loadHseData();
+        
+        // Pindah langsung ke Dashboard untuk lihat hasilnya
+        switchTab('dashboard');
 
       } catch (err) {
-        console.error("Error Detail:", err);
+        console.error(err);
         Swal.fire({
           icon: 'error',
           title: 'Gagal Mengirim Laporan',
-          text: err.message || 'Periksa tabel Supabase kamu.',
+          text: err.message || 'Cek tabel Supabase kamu.',
           background: '#0f172a',
           color: '#f8fafc',
           confirmButtonColor: '#ef4444'
         });
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i> <span>KIRIM LAPORAN K3 KE TIM HSE</span>`;
+        btn.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i> <span>KIRIM LAPORAN K3</span>`;
         lucide.createIcons();
       }
     });
 
-    // 3. LOAD DATA FROM SUPABASE
+    // 4. FETCH & RENDER DATA
     async function loadHseData() {
       try {
         const { data, error } = await supabase
@@ -379,121 +415,83 @@
         renderTable(data || []);
 
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('Error:', err);
       }
     }
 
-    // 4. RENDER STATS CARDS
     function renderStats(data) {
       document.getElementById('stat-total').innerText = data.length;
       document.getElementById('stat-pending').innerText = data.filter(d => d.status === 'PENDING').length;
       document.getElementById('stat-resolved').innerText = data.filter(d => d.status === 'RESOLVED').length;
-      document.getElementById('stat-critical').innerText = data.filter(d => d.risk_level.includes('Kritis') || d.risk_level.includes('Tinggi')).length;
+      document.getElementById('stat-critical').innerText = data.filter(d => d.risk_level && (d.risk_level.includes('Kritis') || d.risk_level.includes('Tinggi'))).length;
     }
 
-    // 5. RENDER HAZARD FEED
     function renderFeed(data) {
-      const feedContainer = document.getElementById('hazardFeed');
+      const feed = document.getElementById('hazardFeed');
       if (data.length === 0) {
-        feedContainer.innerHTML = `<div class="text-center py-10 text-slate-500 text-xs">Belum ada aktivitas laporan bahaya.</div>`;
+        feed.innerHTML = `<div class="text-center col-span-full py-10 text-slate-500 text-xs">Belum ada laporan K3.</div>`;
         return;
       }
 
-      feedContainer.innerHTML = data.slice(0, 5).map(item => {
-        let riskColor = 'border-emerald-500/30 text-emerald-400 bg-emerald-500/10';
-        if (item.risk_level.includes('Sedang')) riskColor = 'border-amber-500/30 text-amber-400 bg-amber-500/10';
-        if (item.risk_level.includes('Tinggi')) riskColor = 'border-orange-500/30 text-orange-400 bg-orange-500/10';
-        if (item.risk_level.includes('Kritis')) riskColor = 'border-red-500/30 text-red-400 bg-red-500/10';
-
-        return `
-          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${riskColor}">${item.risk_level}</span>
-              <span class="text-[10px] text-slate-500">${new Date(item.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-            </div>
-            <p class="text-xs font-semibold text-slate-200 line-clamp-1">${item.hazard_category}</p>
-            <p class="text-[11px] text-slate-400 line-clamp-2">${item.description}</p>
-            <div class="flex items-center justify-between pt-1 border-t border-slate-900 text-[10px] text-slate-500">
-              <span>📍 ${item.location_area}</span>
-              <span>👤 ${item.reporter_name}</span>
-            </div>
+      feed.innerHTML = data.slice(0, 6).map(item => `
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/30 text-amber-400 bg-amber-500/10">${item.risk_level}</span>
+            <span class="text-[10px] text-slate-500">${new Date(item.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
           </div>
-        `;
-      }).join('');
+          <p class="text-xs font-semibold text-slate-200">${item.hazard_category}</p>
+          <p class="text-[11px] text-slate-400 line-clamp-2">${item.description}</p>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-900 text-[10px] text-slate-500">
+            <span>📍 ${item.location_area}</span>
+            <span>👤 ${item.reporter_name}</span>
+          </div>
+        </div>
+      `).join('');
       lucide.createIcons();
     }
 
-    // 6. RENDER TABLE
     function renderTable(data) {
       const tableBody = document.getElementById('tableBody');
       if (data.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">Belum ada data laporan K3.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">Belum ada laporan.</td></tr>`;
         return;
       }
 
-      tableBody.innerHTML = data.map(item => {
-        let statusBadge = item.status === 'RESOLVED' 
-          ? `<span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full font-bold text-[10px]">VERIFIED / SELESAI</span>`
-          : `<span class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full font-bold text-[10px] animate-pulse">PENDING ACTION</span>`;
-
-        return `
-          <tr class="hover:bg-slate-800/40 transition border-b border-slate-800/40">
-            <td class="p-3.5">
-              <div class="font-semibold text-slate-200">${item.reporter_name}</div>
-              <div class="text-[10px] text-slate-500">${item.badge_id} • ${item.shift}</div>
-            </td>
-            <td class="p-3.5 font-medium text-amber-400/90">${item.location_area}</td>
-            <td class="p-3.5">
-              <div class="font-medium text-slate-300">${item.hazard_category}</div>
-              <div class="text-[10px] text-slate-400">${item.risk_level}</div>
-            </td>
-            <td class="p-3.5 max-w-xs">
-              <p class="truncate text-slate-300">${item.description}</p>
-              <div class="text-[10px] text-slate-500 truncate">Tindakan: ${item.immediate_action}</div>
-            </td>
-            <td class="p-3.5 text-slate-400">${item.supervisor_assigned}</td>
-            <td class="p-3.5 text-center">${statusBadge}</td>
-            <td class="p-3.5 text-center">
-              ${item.status === 'PENDING' ? `
-                <button onclick="updateStatus('${item.id}', 'RESOLVED')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded-lg text-[10px] transition cursor-pointer">
-                  Tandai Selesai
-                </button>
-              ` : `
-                <span class="text-slate-500 text-[10px]">Tuntas</span>
-              `}
-            </td>
-          </tr>
-        `;
-      }).join('');
+      tableBody.innerHTML = data.map(item => `
+        <tr class="hover:bg-slate-800/40 border-b border-slate-800/40">
+          <td class="p-3.5">
+            <div class="font-semibold text-slate-200">${item.reporter_name}</div>
+            <div class="text-[10px] text-slate-500">${item.badge_id}</div>
+          </td>
+          <td class="p-3.5 text-amber-400">${item.location_area}</td>
+          <td class="p-3.5">
+            <div>${item.hazard_category}</div>
+            <div class="text-[10px] text-slate-400">${item.risk_level}</div>
+          </td>
+          <td class="p-3.5 max-w-xs truncate">${item.description}</td>
+          <td class="p-3.5 text-center">
+            ${item.status === 'RESOLVED' 
+              ? `<span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full font-bold text-[10px]">SELESAI</span>`
+              : `<span class="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full font-bold text-[10px] animate-pulse">PENDING</span>`}
+          </td>
+          <td class="p-3.5 text-center">
+            ${item.status === 'PENDING' ? `
+              <button onclick="updateStatus('${item.id}', 'RESOLVED')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded text-[10px] transition cursor-pointer">
+                Selesaikan
+              </button>
+            ` : `<span class="text-slate-500 text-[10px]">Tuntas</span>`}
+          </td>
+        </tr>
+      `).join('');
       lucide.createIcons();
     }
 
-    // 7. UPDATE STATUS
     async function updateStatus(id, newStatus) {
-      try {
-        const { error } = await supabase
-          .from('hse_inspection')
-          .update({ status: newStatus })
-          .eq('id', id);
-
-        if (error) throw error;
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Status Diperbarui!',
-          text: 'Tindakan perbaikan K3 telah diverifikasi selesai.',
-          background: '#0f172a',
-          color: '#f8fafc',
-          confirmButtonColor: '#10b981'
-        });
-
-        loadHseData();
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Gagal Update', text: err.message, background: '#0f172a', color: '#f8fafc' });
-      }
+      const { error } = await supabase.from('hse_inspection').update({ status: newStatus }).eq('id', id);
+      if(!error) loadHseData();
     }
 
-    // Init Load
+    // Init
     loadHseData();
     lucide.createIcons();
   </script>
