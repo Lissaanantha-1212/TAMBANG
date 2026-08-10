@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-950 text-slate-100">
+<html lang="id" class="h-full bg-slate-950 text-slate-100 scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,39 +19,35 @@
     .font-tech { font-family: 'Chakra Petch', sans-serif; }
   </style>
 </head>
-<body class="h-full flex overflow-hidden">
+<body class="h-full flex overflow-hidden bg-slate-950">
 
-  <!-- ================= SIDEBAR KIRI (ENTERPRISE NAVIGATION) ================= -->
-  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0 hidden md:flex">
+  <!-- ================= SIDEBAR KIRI ================= -->
+  <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0 hidden md:flex h-full">
     <div>
       <!-- Brand Logo -->
       <div class="p-5 border-b border-slate-800 flex items-center space-x-3 bg-gradient-to-r from-amber-500/10 to-transparent">
-        <div class="bg-amber-500 text-slate-950 p-2.5 rounded-lg shadow-lg shadow-amber-500/20 font-bold">
+        <div class="bg-amber-500 text-slate-950 p-2.5 rounded-lg shadow-lg shadow-amber-500/20 font-bold flex items-center justify-center">
           <i data-lucide="shield-alert" class="w-6 h-6"></i>
         </div>
         <div>
           <h1 class="font-tech text-xl font-bold tracking-wider text-amber-400">COALSAFE <span class="text-white">360</span></h1>
-          <p class="text-[10px] text-slate-400 tracking-widest uppercase font-semibold">Mine HSE & K3 Platform</p>
+          <p class="text-[10px] text-slate-400 tracking-widest uppercase font-semibold">Mine HSE Platform</p>
         </div>
       </div>
 
       <!-- Navigation Links -->
-      <nav class="p-4 space-y-1.5 text-sm">
-        <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg bg-amber-500/10 text-amber-400 font-medium border-l-4 border-amber-500">
+      <nav class="p-4 space-y-2 text-sm">
+        <a href="#top-dashboard" class="nav-item flex items-center space-x-3 px-3.5 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-medium border-l-4 border-amber-500 transition">
           <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
           <span>Dashboard K3</span>
         </a>
-        <a href="#form-section" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition">
+        <a href="#form-section" class="nav-item flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition">
           <i data-lucide="file-plus" class="w-5 h-5"></i>
           <span>Lapor Bahaya (Hazard)</span>
         </a>
-        <a href="#table-section" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition">
+        <a href="#table-section" class="nav-item flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition">
           <i data-lucide="clipboard-check" class="w-5 h-5"></i>
           <span>Verifikasi & CAPA</span>
-        </a>
-        <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition">
-          <i data-lucide="hard-hat" class="w-5 h-5"></i>
-          <span>Inspeksi Alat Berat</span>
         </a>
       </nav>
     </div>
@@ -71,10 +67,10 @@
   </aside>
 
   <!-- ================= MAIN CONTENT AREA ================= -->
-  <div class="flex-1 flex flex-col h-full overflow-y-auto bg-slate-950">
+  <div id="mainContent" class="flex-1 flex flex-col h-full overflow-y-auto bg-slate-950 scroll-smooth">
     
     <!-- Top Header Bar -->
-    <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+    <header id="top-dashboard" class="bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
       <div>
         <h2 class="text-lg font-bold font-tech text-slate-100 flex items-center gap-2">
           <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -90,13 +86,12 @@
       </div>
     </header>
 
-    <main class="p-6 space-y-6 max-w-7xl mx-auto w-full">
+    <main class="p-6 space-y-8 max-w-7xl mx-auto w-full">
 
       <!-- ================= STATS OVERVIEW CARDS ================= -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Card 1 -->
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center space-x-4">
-          <div class="p-3 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20">
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
+          <div class="p-3 bg-red-500/10 text-red-400 rounded-xl border border-red-500/20">
             <i data-lucide="alert-triangle" class="w-6 h-6"></i>
           </div>
           <div>
@@ -104,9 +99,8 @@
             <h3 class="text-2xl font-bold font-tech text-slate-100" id="stat-total">0</h3>
           </div>
         </div>
-        <!-- Card 2 -->
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center space-x-4">
-          <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg border border-amber-500/20">
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
+          <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
             <i data-lucide="clock" class="w-6 h-6"></i>
           </div>
           <div>
@@ -114,9 +108,8 @@
             <h3 class="text-2xl font-bold font-tech text-amber-400" id="stat-pending">0</h3>
           </div>
         </div>
-        <!-- Card 3 -->
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center space-x-4">
-          <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20">
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
+          <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
             <i data-lucide="check-circle-2" class="w-6 h-6"></i>
           </div>
           <div>
@@ -124,9 +117,8 @@
             <h3 class="text-2xl font-bold font-tech text-emerald-400" id="stat-resolved">0</h3>
           </div>
         </div>
-        <!-- Card 4 -->
-        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex items-center space-x-4">
-          <div class="p-3 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20">
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center space-x-4">
+          <div class="p-3 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
             <i data-lucide="shield-x" class="w-6 h-6"></i>
           </div>
           <div>
@@ -137,7 +129,7 @@
       </div>
 
       <!-- ================= MAIN SECTION: FORM & FEED ================= -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6" id="form-section">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 scroll-mt-24" id="form-section">
         
         <!-- FORM INPUT LAPORAN (7 KOLOM) -->
         <div class="lg:col-span-7 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-6">
@@ -153,7 +145,6 @@
           </div>
 
           <form id="hseForm" class="space-y-4">
-            <!-- Row 1: Pelapor & Badge ID -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Pelapor / Pekerja *</label>
@@ -165,7 +156,6 @@
               </div>
             </div>
 
-            <!-- Row 2: Shift, Lokasi Site, & Tanggal/Waktu -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1">Shift Kerja *</label>
@@ -182,7 +172,7 @@
                   <option value="Hauling Road (Jalan Angkut)">Hauling Road (Jalan Angkut)</option>
                   <option value="Stockpile Batu Bara">Stockpile Batu Bara</option>
                   <option value="Port Jetty & Conveyor">Port Jetty & Conveyor</option>
-                  <option value="Workshop Alat Berat (Heavy Equipment)">Workshop Alat Berat</option>
+                  <option value="Workshop Alat Berat">Workshop Alat Berat</option>
                   <option value="Mess & Kantin Karyawan">Mess & Kantin Karyawan</option>
                 </select>
               </div>
@@ -192,7 +182,6 @@
               </div>
             </div>
 
-            <!-- Row 3: Klasifikasi Bahaya & Tingkat Risiko -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1">Kategori Bahaya *</label>
@@ -215,13 +204,11 @@
               </div>
             </div>
 
-            <!-- Row 4: Deskripsi Bahaya -->
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1">Kronologi / Deskripsi Pengamatan Bahaya *</label>
               <textarea id="description" rows="3" required placeholder="Jelaskan detail bahaya (misal: Tanggul jalan hauling longsor, pengemudi DT tidak pakai APD, dll)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition"></textarea>
             </div>
 
-            <!-- Row 5: Tindakan Langsung & Foto URL -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1">Tindakan Langsung Yang Diambil</label>
@@ -233,14 +220,12 @@
               </div>
             </div>
 
-            <!-- Row 6: Supervisor Penanggung Jawab -->
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1">Supervisor Area Penanggung Jawab *</label>
               <input type="text" id="supervisor_assigned" required placeholder="Nama Supervisor / Superintendent Area" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500 transition">
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" id="btnSubmit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold font-tech text-base py-3 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center space-x-2">
+            <button type="submit" id="btnSubmit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold font-tech text-base py-3 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center space-x-2 cursor-pointer">
               <i data-lucide="send" class="w-5 h-5"></i>
               <span>KIRIM LAPORAN K3 KE TIM HSE</span>
             </button>
@@ -258,7 +243,6 @@
               <span class="text-xs text-slate-400">Live Update</span>
             </div>
 
-            <!-- Container Feed -->
             <div id="hazardFeed" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
               <div class="text-center py-10 text-slate-500 text-xs">Mengambil data dari Supabase...</div>
             </div>
@@ -272,7 +256,7 @@
       </div>
 
       <!-- ================= TABLE SECTION: REVIU & TUNTAS BAHAYA ================= -->
-      <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 space-y-4" id="table-section">
+      <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 space-y-4 scroll-mt-24" id="table-section">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
             <h3 class="text-lg font-bold font-tech text-slate-100 flex items-center gap-2">
@@ -281,12 +265,11 @@
             </h3>
             <p class="text-xs text-slate-400">Monitor status dan tindak lanjuti laporan bahaya K3 oleh HSE Supervisor.</p>
           </div>
-          <button onclick="loadHseData()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition flex items-center gap-2 self-start">
+          <button onclick="loadHseData()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition flex items-center gap-2 self-start cursor-pointer">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh Data
           </button>
         </div>
 
-        <!-- Table Container -->
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs text-slate-300">
             <thead class="bg-slate-950 text-slate-400 font-tech uppercase tracking-wider border-b border-slate-800">
@@ -314,12 +297,12 @@
 
   <!-- ================= SUPABASE & JAVASCRIPT LOGIC ================= -->
   <script>
-    // 1. SUPABASE CONFIGURATION (SUDAH DIHUBUNGKAN KE AKUN KAMU)
+    // 1. SUPABASE CONFIGURATION
     const SUPABASE_URL = 'https://ztgjmyjrtrlyrgntvtny.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_GGh8txjx_3OFYwmTGdccjQ_zkxRYqep';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Set Default Waktu Ke Sekarang pada Input
+    // Set Default Waktu Ke Sekarang
     document.getElementById('incident_time').value = new Date().toISOString().slice(0, 16);
 
     // 2. SUBMIT FORM HANDLER
@@ -347,7 +330,7 @@
       };
 
       try {
-        const { data, error } = await supabase.from('hse_inspection').insert([payload]);
+        const { data, error } = await supabase.from('hse_inspection').insert([payload]).select();
 
         if (error) throw error;
 
@@ -365,10 +348,11 @@
         loadHseData();
 
       } catch (err) {
+        console.error("Error Detail:", err);
         Swal.fire({
           icon: 'error',
           title: 'Gagal Mengirim Laporan',
-          text: err.message || 'Periksa koneksi atau tabel Supabase kamu.',
+          text: err.message || 'Periksa tabel Supabase kamu.',
           background: '#0f172a',
           color: '#f8fafc',
           confirmButtonColor: '#ef4444'
@@ -407,7 +391,7 @@
       document.getElementById('stat-critical').innerText = data.filter(d => d.risk_level.includes('Kritis') || d.risk_level.includes('Tinggi')).length;
     }
 
-    // 5. RENDER HAZARD FEED (SISI KANAN)
+    // 5. RENDER HAZARD FEED
     function renderFeed(data) {
       const feedContainer = document.getElementById('hazardFeed');
       if (data.length === 0) {
@@ -436,9 +420,10 @@
           </div>
         `;
       }).join('');
+      lucide.createIcons();
     }
 
-    // 6. RENDER TABLE (VERIFIKASI & ACTION)
+    // 6. RENDER TABLE
     function renderTable(data) {
       const tableBody = document.getElementById('tableBody');
       if (data.length === 0) {
@@ -470,7 +455,7 @@
             <td class="p-3.5 text-center">${statusBadge}</td>
             <td class="p-3.5 text-center">
               ${item.status === 'PENDING' ? `
-                <button onclick="updateStatus('${item.id}', 'RESOLVED')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded-lg text-[10px] transition">
+                <button onclick="updateStatus('${item.id}', 'RESOLVED')" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded-lg text-[10px] transition cursor-pointer">
                   Tandai Selesai
                 </button>
               ` : `
@@ -480,9 +465,10 @@
           </tr>
         `;
       }).join('');
+      lucide.createIcons();
     }
 
-    // 7. UPDATE STATUS LAPORAN (VERIFIKASI SUPERVISOR)
+    // 7. UPDATE STATUS
     async function updateStatus(id, newStatus) {
       try {
         const { error } = await supabase
