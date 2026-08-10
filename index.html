@@ -2,189 +2,183 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>COALSAFE 360 - Realtime Cloud HSE System</title>
-
-  <!-- Tailwind CSS CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COALSAFE 360 - Mine HSE Management System</title>
+  <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- SUPABASE JS CLIENT LIBRARY -->
+  <!-- Supabase JS SDK v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #0b0f19;
-      color: #e2e8f0;
-    }
-    
-    .nav-btn-dt.active {
-      background-color: #1e293b;
-      color: #f59e0b;
-      border-left: 4px solid #f59e0b;
-    }
-
-    .nav-btn-mb.active {
-      color: #f59e0b;
-    }
-
-    .mobile-frame {
-      max-width: 450px;
-      margin: 0 auto;
-      border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-      border: 6px solid #1e293b;
-      background-color: #0f172a;
-    }
+    body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #e2e8f0; }
+    .nav-btn-dt.active { background-color: #1e293b; color: #f59e0b; border-left: 4px solid #f59e0b; }
+    .nav-btn-mb.active { color: #f59e0b; }
+    .mobile-frame { max-width: 480px; margin: 0 auto; border-radius: 20px; border: 4px solid #1e293b; background-color: #0f172a; }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
   </style>
 </head>
 <body class="bg-[#0b0f19] text-gray-200 min-h-screen flex flex-col">
 
-  <!-- TOP BAR: MODE SWITCHER -->
+  <!-- TOP APP BAR -->
   <header class="bg-[#111827] border-b border-slate-800 px-4 py-3 flex justify-between items-center sticky top-0 z-50">
     <div class="flex items-center space-x-3">
-      <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center font-black text-black text-lg">C</div>
+      <div class="w-9 h-9 bg-amber-500 rounded-xl flex items-center justify-center font-black text-black text-xl shadow-lg shadow-amber-500/20">C</div>
       <div>
-        <h1 class="text-sm font-bold text-white tracking-wider">COALSAFE 360</h1>
-        <p class="text-[10px] text-amber-500 font-semibold">MINE HSE SYSTEM (SUPABASE LIVE)</p>
+        <div class="flex items-center gap-2">
+          <h1 class="text-sm font-extrabold text-white tracking-wider">COALSAFE 360</h1>
+          <span class="bg-amber-500/20 text-amber-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-amber-500/30">v2.5 LIVE</span>
+        </div>
+        <p class="text-[10px] text-slate-400 font-medium">MINE HSE SYSTEM (ENTERPRISE EDITION)</p>
       </div>
     </div>
-
+    
+    <!-- MODE SWITCHER -->
     <div class="flex bg-[#1e293b] p-1 rounded-lg border border-slate-700">
-      <button onclick="setAppMode('mobile')" id="btn-mode-mobile" class="px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black">
-        <i class="fa-solid fa-mobile-screen-button"></i> Mode HP (Lapangan)
+      <button onclick="setAppMode('mobile')" id="btn-mode-mobile" class="px-3 py-1.5 text-xs font-bold rounded-md bg-amber-500 text-black transition-all">
+        <i class="fa-solid fa-mobile-screen-button mr-1"></i> Mode HP (Lapangan)
       </button>
-      <button onclick="setAppMode('desktop')" id="btn-mode-desktop" class="px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white">
-        <i class="fa-solid fa-laptop"></i> Mode Laptop (Control Room)
+      <button onclick="setAppMode('desktop')" id="btn-mode-desktop" class="px-3 py-1.5 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all">
+        <i class="fa-solid fa-laptop mr-1"></i> Mode Laptop (Control Room)
       </button>
     </div>
   </header>
 
-  <!-- MODE HP (LAPANGAN) -->
+  <!-- ================================================================= -->
+  <!-- 1. MODE HP (LAPANGAN - E-HAZARD REPORT) -->
+  <!-- ================================================================= -->
   <div id="wrapper-mobile" class="flex-1 p-2 sm:p-4 my-2">
-    <div class="mobile-frame min-h-[85vh] flex flex-col justify-between overflow-hidden relative pb-16">
+    <div class="mobile-frame min-h-[88vh] flex flex-col justify-between overflow-hidden relative pb-16 shadow-2xl">
       
-      <div class="bg-[#1e293b] p-4 border-b border-slate-800 flex justify-between items-center">
+      <!-- Mobile Header -->
+      <div class="bg-[#111827] p-4 border-b border-slate-800 flex justify-between items-center">
         <div>
-          <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30">
-            <i class="fa-solid fa-database text-xs mr-1"></i> SUPABASE LIVE CONNECTED
+          <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30 flex items-center w-max gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> SUPABASE CLOUD LIVE
           </span>
-          <h2 class="text-sm font-bold text-white mt-1">E-Hazard Report Mandor</h2>
-          <p class="text-[10px] text-slate-400">Pit Central Corridor - Shift 1 (Day)</p>
+          <h2 class="text-base font-bold text-white mt-1">E-Hazard Report Mandor</h2>
         </div>
-        <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold border border-amber-500/40">
-          M-01
+        <div class="text-right">
+          <p class="text-[10px] text-slate-400">Status Jaringan</p>
+          <p class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-wifi mr-1"></i> Terhubung</p>
         </div>
       </div>
 
+      <!-- Mobile Content Area -->
       <div class="p-4 overflow-y-auto flex-1 space-y-4">
-
+        
+        <!-- PAGE 1: FORM INPUT HAZARD -->
         <div id="m-page-lapor" class="m-page-section">
           <form id="mobile-hazard-form" onsubmit="submitMobileHazard(event)" class="space-y-4">
             
-            <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-xs text-amber-300 flex items-center gap-2">
-              <i class="fa-solid fa-triangle-exclamation text-base"></i>
-              <span>Laporan tersimpan otomatis di Supabase & tersinkron ke Laptop!</span>
-            </div>
-
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Shift Kerja</label>
-                <select id="m-shift" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white">
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Shift Kerja <span class="text-red-400">*</span></label>
+                <select id="m-shift" required class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
                   <option value="Shift 1 (Siang)">Shift 1 (Siang)</option>
                   <option value="Shift 2 (Malam)">Shift 2 (Malam)</option>
                 </select>
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Kategori K3</label>
-                <select id="m-category" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white">
-                  <option value="Unsafe Condition (Kondisi Bahaya)">Unsafe Condition</option>
-                  <option value="Unsafe Action (Tindakan Bahaya)">Unsafe Action</option>
-                  <option value="Nearmiss (Hampir Celaka)">Nearmiss</option>
-                  <option value="Environmental (Lingkungan Hidup)">Environmental</option>
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Kategori K3 <span class="text-red-400">*</span></label>
+                <select id="m-category" required class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
+                  <option value="Unsafe Condition">Unsafe Condition (Kondisi Bahaya)</option>
+                  <option value="Unsafe Action">Unsafe Action (Tindakan Bahaya)</option>
+                  <option value="Nearmiss">Nearmiss (Hampir Celaka)</option>
+                  <option value="K3LH Health">K3LH Health / Lingkungan</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Judul Temuan Bahaya</label>
-              <input type="text" id="m-title" required placeholder="Misal: Tangga Excavator PC2000 Retak" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Judul Temuan Bahaya <span class="text-red-400">*</span></label>
+              <input type="text" id="m-title" required placeholder="Contoh: Tanggul Pit C Retak / Tangga Unit Rusak" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
             </div>
 
-            <!-- FITUR FOTO BUKTI -->
-            <div class="bg-[#1e293b] p-3 rounded-lg border border-amber-500/40">
-              <label class="block text-[11px] font-bold text-amber-400 mb-1.5"><i class="fa-solid fa-camera text-sm mr-1"></i> Foto Bukti Lapangan</label>
-              <input type="file" id="m-photo" accept="image/*" onchange="previewPhoto(event)" class="w-full text-xs text-slate-300 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-black hover:file:bg-amber-400 cursor-pointer">
+            <!-- FOTO BUKTI TEMUAN -->
+            <div class="bg-[#1e293b]/60 p-3 rounded-xl border border-amber-500/40">
+              <label class="block text-[11px] font-bold text-amber-400 mb-1">
+                <i class="fa-solid fa-camera mr-1"></i> Foto Temuan Lapangan <span class="text-red-400">*</span>
+              </label>
+              <input type="file" id="m-photo" accept="image/*" onchange="previewPhoto(event)" class="w-full text-xs text-slate-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-amber-500 file:text-black font-extrabold cursor-pointer">
+              
               <div id="photo-preview-container" class="mt-2 hidden">
-                <img id="photo-preview" src="" class="max-h-36 rounded-lg border border-slate-700 object-cover w-full">
+                <p class="text-[10px] text-slate-400 mb-1">Preview Foto:</p>
+                <img id="photo-preview" src="" class="max-h-40 rounded-lg border border-slate-700 w-full object-cover">
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Area / Lokasi</label>
-                <input type="text" id="m-location" required placeholder="Contoh: Pit West A" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Area / Lokasi Pit <span class="text-red-400">*</span></label>
+                <input type="text" id="m-location" required placeholder="Pit 3 South / KM 12" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
               </div>
               <div>
                 <label class="block text-[11px] font-semibold text-slate-300 mb-1">No. Unit / Alat</label>
-                <input type="text" id="m-unit" placeholder="Contoh: DT-882" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
+                <input type="text" id="m-unit" placeholder="EX-2001 / DT-889" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
               </div>
             </div>
 
             <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Matriks Tingkat Risiko</label>
-              <select id="m-risk" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Tingkat Risiko <span class="text-red-400">*</span></label>
+              <select id="m-risk" required class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
                 <option value="Rendah">🟢 Rendah (Low Risk)</option>
                 <option value="Sedang" selected>🟡 Sedang (Medium Risk)</option>
-                <option value="Tinggi">🔴 Tinggi / Kritis (High Risk)</option>
+                <option value="Tinggi">🔴 Tinggi / Critical Risk</option>
               </select>
             </div>
 
             <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rincian Bahaya</label>
-              <textarea id="m-desc" rows="3" required placeholder="Jelaskan detail bahaya..." class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none"></textarea>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rincian Deskripsi Bahaya <span class="text-red-400">*</span></label>
+              <textarea id="m-desc" rows="3" required placeholder="Jelaskan kondisi bahaya secara detail..." class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none"></textarea>
             </div>
 
             <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Tindakan Langsung</label>
-              <input type="text" id="m-action" placeholder="Koreksi awal..." class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Tindakan Langsung Yang Diambil</label>
+              <input type="text" id="m-action" placeholder="Contoh: Memasang Safety Cone & Menghubungi Supervisor" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
             </div>
 
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Pelapor</label>
-                <input type="text" id="m-reporter" required value="Budi Santoso" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white">
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nama Pelapor <span class="text-red-400">*</span></label>
+                <input type="text" id="m-reporter" required value="Budi Santoso" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Perusahaan</label>
-                <input type="text" id="m-company" required value="PT Batubara Utama" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white">
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Perusahaan / Subkon <span class="text-red-400">*</span></label>
+                <input type="text" id="m-company" required value="PT Batubara Utama" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:border-amber-500 focus:outline-none">
               </div>
             </div>
 
-            <button type="submit" id="btn-submit" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-extrabold py-3 rounded-lg text-xs transition shadow-lg shadow-amber-500/20 uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
-              <i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE
+            <button type="submit" id="btn-submit" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20 active:scale-95">
+              <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Laporan Ke Control Room
             </button>
-
           </form>
         </div>
 
+        <!-- PAGE 2: RIWAYAT ONLINE LAPANGAN -->
         <div id="m-page-history" class="m-page-section hidden space-y-3">
-          <h3 class="text-xs font-bold text-white border-b border-slate-800 pb-2">Daftar Laporan Terkirim (Supabase)</h3>
-          <div id="m-reports-list" class="space-y-2"></div>
+          <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-bold text-white"><i class="fa-solid fa-list-check text-amber-500 mr-1"></i> Live Stream Hazard Lapangan</h3>
+            <span id="m-count-badge" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full">0 Laporan</span>
+          </div>
+          <div id="m-reports-list" class="space-y-3">
+            <!-- Feed Laporan Mobile Muncul Di Sini -->
+          </div>
         </div>
 
       </div>
 
-      <div class="absolute bottom-0 left-0 right-0 bg-[#111827] border-t border-slate-800 flex justify-around py-2">
-        <button onclick="switchMobileTab('lapor')" id="m-btn-lapor" class="nav-btn-mb active flex flex-col items-center text-slate-400">
-          <i class="fa-solid fa-pen-to-square text-base"></i>
+      <!-- Mobile Bottom Nav -->
+      <div class="absolute bottom-0 left-0 right-0 bg-[#111827] border-t border-slate-800 flex justify-around py-2 z-10">
+        <button onclick="switchMobileTab('lapor')" id="m-btn-lapor" class="nav-btn-mb active flex flex-col items-center text-slate-400 hover:text-amber-500">
+          <i class="fa-solid fa-pen-to-square text-lg"></i>
           <span class="text-[10px] mt-0.5 font-bold">Input Hazard</span>
         </button>
-        <button onclick="switchMobileTab('history')" id="m-btn-history" class="nav-btn-mb flex flex-col items-center text-slate-400">
-          <i class="fa-solid fa-clock-rotate-left text-base"></i>
+        <button onclick="switchMobileTab('history')" id="m-btn-history" class="nav-btn-mb flex flex-col items-center text-slate-400 hover:text-amber-500">
+          <i class="fa-solid fa-clock-rotate-left text-lg"></i>
           <span class="text-[10px] mt-0.5 font-bold">Riwayat Live</span>
         </button>
       </div>
@@ -192,71 +186,110 @@
     </div>
   </div>
 
-  <!-- MODE LAPTOP (DESKTOP CONTROL ROOM) -->
+  <!-- ================================================================= -->
+  <!-- 2. MODE LAPTOP (CONTROL ROOM / DESKTOP VIEW) -->
+  <!-- ================================================================= -->
   <div id="wrapper-desktop" class="hidden flex-1 flex flex-col md:flex-row min-h-[90vh]">
-    <aside class="w-64 bg-[#111827] border-r border-slate-800 p-4 flex flex-col justify-between">
-      <div class="space-y-4">
-        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">HSE Control Room</div>
-        <nav class="space-y-1">
-          <button onclick="switchDesktopTab('dashboard')" id="dt-btn-dashboard" class="nav-btn-dt active w-full flex items-center space-x-3 px-4 py-3 rounded-r-lg text-xs font-semibold text-gray-300 hover:bg-slate-800 transition">
-            <i class="fa-solid fa-chart-line w-4"></i>
-            <span>Dashboard Statistics</span>
-          </button>
-          <button onclick="switchDesktopTab('verifikasi')" id="dt-btn-verifikasi" class="nav-btn-dt w-full flex items-center space-x-3 px-4 py-3 rounded-r-lg text-xs font-semibold text-gray-300 hover:bg-slate-800 transition">
-            <i class="fa-solid fa-check-double w-4"></i>
-            <span>Verifikasi & CAPA</span>
-          </button>
-        </nav>
-      </div>
+    
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#111827] border-r border-slate-800 p-4 space-y-4">
+      <div class="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">HSE Control Room</div>
+      <nav class="space-y-1">
+        <button onclick="switchDesktopTab('dashboard')" id="dt-btn-dashboard" class="nav-btn-dt active w-full flex items-center space-x-3 px-4 py-3 rounded-r-lg text-xs font-semibold text-gray-300 transition-all">
+          <i class="fa-solid fa-chart-line w-4"></i><span>Dashboard Statistics</span>
+        </button>
+        <button onclick="switchDesktopTab('verifikasi')" id="dt-btn-verifikasi" class="nav-btn-dt w-full flex items-center space-x-3 px-4 py-3 rounded-r-lg text-xs font-semibold text-gray-300 transition-all">
+          <i class="fa-solid fa-check-double w-4"></i><span>Verifikasi & CAPA</span>
+        </button>
+      </nav>
 
-      <div class="p-3 bg-[#1e293b] rounded-lg border border-slate-700 text-xs">
-        <p class="font-bold text-amber-400">HSE Officer Monitor</p>
-        <p class="text-[10px] text-slate-400">Supabase: <span class="text-emerald-400 font-bold">Connected</span></p>
+      <div class="pt-6 border-t border-slate-800">
+        <div class="bg-[#0f172a] p-3 rounded-lg border border-slate-800 text-xs space-y-1">
+          <p class="text-slate-400 font-medium">Database Status:</p>
+          <p class="text-emerald-400 font-bold flex items-center gap-1"><i class="fa-solid fa-database"></i> Supabase Connected</p>
+        </div>
       </div>
     </aside>
 
+    <!-- Main Content Desktop -->
     <main class="flex-1 p-6 space-y-6 overflow-y-auto">
+      
+      <!-- TAB 1: DASHBOARD STATS & FEED -->
       <div id="dt-page-dashboard" class="dt-page-section space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div class="bg-[#111827] p-5 rounded-xl border border-slate-800">
-            <p class="text-xs text-slate-400 font-medium">TOTAL LAPORAN MASUK</p>
-            <h3 id="dt-stat-total" class="text-3xl font-extrabold text-white mt-1">0</h3>
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="bg-[#111827] p-5 rounded-2xl border border-slate-800 shadow-lg">
+            <div class="flex justify-between items-center text-slate-400 mb-2">
+              <span class="text-xs font-bold">TOTAL LAPORAN</span>
+              <i class="fa-solid fa-folder-open text-blue-400"></i>
+            </div>
+            <h3 id="dt-stat-total" class="text-3xl font-extrabold text-white">0</h3>
           </div>
-          <div class="bg-[#111827] p-5 rounded-xl border border-slate-800">
-            <p class="text-xs text-amber-400 font-medium">PENDING VERIFIKASI</p>
-            <h3 id="dt-stat-pending" class="text-3xl font-extrabold text-amber-400 mt-1">0</h3>
+
+          <div class="bg-[#111827] p-5 rounded-2xl border border-slate-800 shadow-lg">
+            <div class="flex justify-between items-center text-amber-400 mb-2">
+              <span class="text-xs font-bold">PENDING REVIEW</span>
+              <i class="fa-solid fa-hourglass-half text-amber-400"></i>
+            </div>
+            <h3 id="dt-stat-pending" class="text-3xl font-extrabold text-amber-400">0</h3>
           </div>
-          <div class="bg-[#111827] p-5 rounded-xl border border-slate-800">
-            <p class="text-xs text-emerald-400 font-medium">TINDAKAN SELESAI (CLOSED)</p>
-            <h3 id="dt-stat-done" class="text-3xl font-extrabold text-emerald-400 mt-1">0</h3>
+
+          <div class="bg-[#111827] p-5 rounded-2xl border border-slate-800 shadow-lg">
+            <div class="flex justify-between items-center text-emerald-400 mb-2">
+              <span class="text-xs font-bold">VERIFIED / CLOSED</span>
+              <i class="fa-solid fa-circle-check text-emerald-400"></i>
+            </div>
+            <h3 id="dt-stat-done" class="text-3xl font-extrabold text-emerald-400">0</h3>
           </div>
-          <div class="bg-[#111827] p-5 rounded-xl border border-slate-800">
-            <p class="text-xs text-red-400 font-medium">BAHAYA TINGGI / CRITICAL</p>
-            <h3 id="dt-stat-high" class="text-3xl font-extrabold text-red-400 mt-1">0</h3>
+
+          <div class="bg-[#111827] p-5 rounded-2xl border border-slate-800 shadow-lg">
+            <div class="flex justify-between items-center text-red-400 mb-2">
+              <span class="text-xs font-bold">CRITICAL RISK</span>
+              <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
+            </div>
+            <h3 id="dt-stat-high" class="text-3xl font-extrabold text-red-400">0</h3>
           </div>
         </div>
 
-        <div class="bg-[#111827] p-6 rounded-xl border border-slate-800 space-y-4">
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-list text-amber-500"></i> FEED REAL-TIME TEMUAN LAPANGAN
-          </h3>
-          <div id="dt-reports-feed" class="space-y-3">
-            <p class="text-xs text-slate-400 text-center py-6">Memuat data dari Supabase...</p>
+        <!-- Live Feed Dashboard -->
+        <div class="bg-[#111827] p-6 rounded-2xl border border-slate-800 shadow-lg">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-rss text-amber-500"></i> Live Feed Hazard Report Tambang
+            </h3>
+            <span class="text-xs text-slate-400">Auto-update setiap ada laporan baru</span>
+          </div>
+          <div id="dt-reports-feed" class="space-y-4">
+            <!-- Feed Card Muncul Di Sini -->
           </div>
         </div>
       </div>
 
-      <div id="dt-page-verifikasi" class="dt-page-section hidden space-y-6">
-        <div class="bg-[#111827] p-6 rounded-xl border border-slate-800">
-          <h3 class="text-base font-bold text-white mb-4">Verifikasi Laporan & Actions CAPA</h3>
-          <div id="dt-capa-table" class="space-y-3"></div>
+      <!-- TAB 2: VERIFIKASI & ACTION CAPA -->
+      <div id="dt-page-verifikasi" class="dt-page-section hidden">
+        <div class="bg-[#111827] p-6 rounded-2xl border border-slate-800 shadow-lg">
+          <div class="mb-6">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-check-double text-emerald-400"></i> Verifikasi Laporan & Actions CAPA
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">Gunakan tombol verifikasi untuk menutup laporan (Closed) setelah perbaikan di lapangan selesai dilakukan.</p>
+          </div>
+
+          <div id="dt-capa-table" class="space-y-3">
+            <!-- List Verifikasi Muncul Di Sini -->
+          </div>
         </div>
       </div>
+
     </main>
   </div>
 
-  <!-- SCRIPT KONEKSI SUPABASE ENGINE -->
+  <!-- ================================================================= -->
+  <!-- JAVASCRIPT LOGIC & SUPABASE LIVE SYNC -->
+  <!-- ================================================================= -->
   <script>
+    // Config Supabase
     const SUPABASE_URL = 'https://ztgjmyjrtrlyrgntvtny.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_GGh8txjx_3OFYwmTGdccjQ_zkxRYqep';
     const TABLE_NAME = 'hse_inspection';
@@ -265,41 +298,73 @@
     let cachedReports = [];
     let photoBase64 = null;
 
-    function previewPhoto(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          photoBase64 = e.target.result;
+    // 1. Kompresi Foto Otomatis
+    function previewPhoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Max dimension 800px agar payload ringan
+          const MAX_WIDTH = 800;
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convert to JPEG base64 (quality 0.7)
+          photoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          
           document.getElementById('photo-preview').src = photoBase64;
           document.getElementById('photo-preview-container').classList.remove('hidden');
         };
-        reader.readAsDataURL(file);
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // 2. Fetch Data dari Supabase
+    async function fetchReports() {
+      try {
+        let { data, error } = await supabaseClient
+          .from(TABLE_NAME)
+          .select('*')
+          .order('id', { ascending: false });
+
+        if (error) throw error;
+
+        cachedReports = data || [];
+        renderAllViews();
+      } catch (err) {
+        console.error('Error fetch Supabase:', err);
       }
     }
 
-    async function fetchReports() {
-      let { data, error } = await supabaseClient
-        .from(TABLE_NAME)
-        .select('*')
-        .order('id', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching Supabase data:', error.message);
+    // 3. Submit Hazard Report Baru
+    async function submitMobileHazard(e) {
+      e.preventDefault();
+      
+      if (!photoBase64) {
+        alert('⚠️ Harap pilih/upload foto bukti temuan bahaya!');
         return;
       }
 
-      cachedReports = data || [];
-      renderAllViews();
-    }
-
-    async function submitMobileHazard(e) {
-      e.preventDefault();
       const btn = document.getElementById('btn-submit');
       btn.disabled = true;
-      btn.innerText = "Mengirim...";
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim Laporan...`;
 
-      const newReport = {
+      const payload = {
         shift: document.getElementById('m-shift').value,
         category: document.getElementById('m-category').value,
         title: document.getElementById('m-title').value,
@@ -307,206 +372,193 @@
         unit: document.getElementById('m-unit').value || '-',
         risk: document.getElementById('m-risk').value,
         desc: document.getElementById('m-desc').value,
-        action: document.getElementById('m-action').value || 'Belum ada tindakan',
+        action: document.getElementById('m-action').value || '-',
         reporter: document.getElementById('m-reporter').value,
         company: document.getElementById('m-company').value,
-        photo: photoBase64 || null,
+        photo: photoBase64,
         status: 'Pending Review'
       };
 
-      const { data, error } = await supabaseClient
-        .from(TABLE_NAME)
-        .insert([newReport]);
+      try {
+        const { error } = await supabaseClient.from(TABLE_NAME).insert([payload]);
+        if (error) throw error;
 
-      if (error) {
-        alert('Gagal simpan ke Supabase: ' + error.message);
-      } else {
+        alert('✅ LAPORAN HAZARD BERHASIL DIKIRIM KE CONTROL ROOM!');
         document.getElementById('mobile-hazard-form').reset();
         document.getElementById('photo-preview-container').classList.add('hidden');
         photoBase64 = null;
-        alert('✅ LAPORAN TERKIRIM KE SUPABASE!');
+        
         await fetchReports();
         switchMobileTab('history');
+      } catch (err) {
+        alert('❌ Gagal Kirim Laporan: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Kirim Laporan Ke Control Room`;
       }
-
-      btn.disabled = false;
-      btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE`;
     }
 
-    // FUNGSI FIX TOMBOL VERIFIKASI (MENGGUNAKAN ID DENGAN AMAN)
+    // 4. Verifikasi & Closed Laporan (FUNGSI VERIFIKASI UTAMA)
     async function markDesktopDone(reportId) {
-      console.log("Mengubah status id:", reportId);
-      
-      const { data, error } = await supabaseClient
-        .from(TABLE_NAME)
-        .update({ status: 'Selesai' })
-        .eq('id', reportId)
-        .select();
+      const confirmAction = confirm("Verifikasi laporan ini dan tandai sebagai SELESAI / CLOSED?");
+      if (!confirmAction) return;
 
-      if (error) {
-        alert('Gagal verifikasi laporan: ' + error.message);
-      } else {
-        alert('✅ Laporan Berhasil Diverifikasi & Diubah Menjadi Selesai!');
+      try {
+        const { error } = await supabaseClient
+          .from(TABLE_NAME)
+          .update({ status: 'Selesai' })
+          .eq('id', reportId);
+
+        if (error) throw error;
+
+        alert('✅ STATUS LAPORAN BERHASIL DIUBAH MENJADI SELESAI / CLOSED!');
         await fetchReports();
+      } catch (err) {
+        alert('❌ Gagal Verifikasi: ' + err.message);
       }
     }
 
+    // 5. Render Semua Tampilan UI
     function renderAllViews() {
-      renderMobileHistory();
-      renderDesktop();
-    }
+      // Counter Badges & Stats
+      document.getElementById('m-count-badge').innerText = cachedReports.length + " Laporan";
+      document.getElementById('dt-stat-total').innerText = cachedReports.length;
+      document.getElementById('dt-stat-pending').innerText = cachedReports.filter(r => (r.status||'').includes('Pending')).length;
+      document.getElementById('dt-stat-done').innerText = cachedReports.filter(r => (r.status||'').includes('Selesai')).length;
+      document.getElementById('dt-stat-high').innerText = cachedReports.filter(r => (r.risk||'').includes('Tinggi')).length;
 
-    function renderMobileHistory() {
-      const container = document.getElementById('m-reports-list');
-      if (!container) return;
-
+      // Render Mobile History Feed
+      const mContainer = document.getElementById('m-reports-list');
       if (cachedReports.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Belum ada laporan terkirim.</p>`;
-        return;
-      }
-
-      container.innerHTML = cachedReports.map(r => `
-        <div class="bg-[#0f172a] p-3 rounded-lg border border-slate-700 text-xs space-y-2">
-          <div class="flex justify-between items-center">
-            <span class="font-bold text-amber-400">${r.category || 'Hazard'}</span>
-            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400':'bg-blue-500/20 text-blue-400'}">${r.risk || 'Low'} Risk</span>
-          </div>
-          <p class="font-bold text-white text-sm">${r.title || 'Tanpa Judul'}</p>
-          ${r.photo ? `<img src="${r.photo}" class="rounded-lg max-h-36 w-full object-cover border border-slate-800">` : ''}
-          <p class="text-slate-300 text-[11px]">${r.desc || '-'}</p>
-          <div class="text-[10px] text-slate-400 pt-1 border-t border-slate-800 flex justify-between">
-            <span>📍 ${r.location || '-'} (Unit: ${r.unit || '-'})</span>
-            <span class="text-amber-500 font-semibold">${r.status || 'Pending'}</span>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderDesktop() {
-      const elTotal = document.getElementById('dt-stat-total');
-      const elPending = document.getElementById('dt-stat-pending');
-      const elDone = document.getElementById('dt-stat-done');
-      const elHigh = document.getElementById('dt-stat-high');
-
-      if (elTotal) elTotal.innerText = cachedReports.length;
-      if (elPending) elPending.innerText = cachedReports.filter(r => (r.status || '').toLowerCase().includes('pending')).length;
-      if (elDone) elDone.innerText = cachedReports.filter(r => (r.status || '').toLowerCase().includes('selesai')).length;
-      if (elHigh) elHigh.innerText = cachedReports.filter(r => (r.risk || '').toLowerCase().includes('tinggi')).length;
-
-      const feed = document.getElementById('dt-reports-feed');
-      const capa = document.getElementById('dt-capa-table');
-
-      if (!feed || !capa) return;
-
-      if (cachedReports.length === 0) {
-        feed.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Belum ada laporan lapangan masuk.</p>`;
-        capa.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada data verifikasi CAPA.</p>`;
-        return;
-      }
-
-      feed.innerHTML = cachedReports.map(r => `
-        <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 space-y-3">
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400 border border-red-500/30':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400 border border-amber-500/30':'bg-blue-500/20 text-blue-400 border border-blue-500/30'}">${r.risk || 'Low'} Risk</span>
-              <span class="text-xs text-slate-400 ml-2">Category: <strong>${r.category || 'General'}</strong></span>
-              <h4 class="font-bold text-white text-base mt-1">${r.title || 'Temuan Bahaya'}</h4>
-            </div>
-            <span class="px-3 py-1 rounded-full text-xs font-semibold ${r.status==='Selesai'?'bg-emerald-500/20 text-emerald-400':'bg-amber-500/20 text-amber-400'}">${r.status || 'Pending'}</span>
-          </div>
-          
-          <div class="flex gap-4 items-start">
-            ${r.photo ? `<img src="${r.photo}" class="w-32 h-24 object-cover rounded-lg border border-slate-700 shrink-0">` : ''}
-            <div class="space-y-2 flex-1">
-              <p class="text-xs text-slate-300">${r.desc || '-'}</p>
-              <div class="text-xs bg-[#0f172a] p-2.5 rounded border border-slate-800 text-slate-300">
-                <strong>Tindakan Awal Lapangan:</strong> ${r.action || '-'}
-              </div>
-            </div>
-          </div>
-
-          <div class="flex justify-between items-center text-[11px] text-slate-400 pt-1 border-t border-slate-800/50">
-            <span>📍 Area: ${r.location || '-'} | Unit: ${r.unit || '-'} | Shift: ${r.shift || '-'}</span>
-            <span>👷 Pelapor: ${r.reporter || '-'} (${r.company || '-'})</span>
-          </div>
-        </div>
-      `).join('');
-
-      capa.innerHTML = cachedReports.map(r => {
-        const isDone = (r.status || '').toLowerCase().includes('selesai');
-        return `
-          <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
-            <div class="flex items-center gap-3">
-              ${r.photo ? `<img src="${r.photo}" class="w-12 h-12 rounded object-cover border border-slate-700">` : ''}
+        mContainer.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs">Belum ada laporan hazard yang masuk.</div>`;
+      } else {
+        mContainer.innerHTML = cachedReports.map(r => `
+          <div class="bg-[#0f172a] p-3 rounded-xl border border-slate-800 text-xs space-y-2">
+            <div class="flex justify-between items-start">
               <div>
-                <p class="font-bold text-white text-sm">${r.title || 'Temuan Bahaya'}</p>
-                <p class="text-slate-400">Lokasi: ${r.location || '-'} | Pelapor: ${r.reporter || '-'}</p>
-                <p class="text-[11px] text-amber-400 mt-0.5">Status: <span class="font-semibold">${r.status || 'Pending Review'}</span></p>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400':'bg-amber-500/20 text-amber-400'}">${r.risk || 'Risk'}</span>
+                <h4 class="font-bold text-white text-sm mt-1">${r.title || 'Laporan Hazard'}</h4>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${r.status==='Selesai'?'bg-emerald-500/20 text-emerald-400':'bg-amber-500/20 text-amber-400'}">
+                ${r.status || 'Pending'}
+              </span>
+            </div>
+
+            ${r.photo ? `<img src="${r.photo}" class="w-full max-h-40 object-cover rounded-lg border border-slate-800">` : ''}
+
+            <p class="text-slate-300 text-[11px]">${r.desc || '-'}</p>
+            <div class="text-[10px] text-slate-400 flex justify-between border-t border-slate-800/80 pt-2">
+              <span><i class="fa-solid fa-location-dot mr-1"></i>${r.location || '-'} (${r.unit || '-'})</span>
+              <span><i class="fa-solid fa-user mr-1"></i>${r.reporter || '-'}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Render Desktop Feed
+      const dtFeedContainer = document.getElementById('dt-reports-feed');
+      if (cachedReports.length === 0) {
+        dtFeedContainer.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs">Belum ada data laporan.</div>`;
+      } else {
+        dtFeedContainer.innerHTML = cachedReports.map(r => `
+          <div class="bg-[#1e293b]/60 p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row gap-4 items-start">
+            ${r.photo ? `<img src="${r.photo}" class="w-36 h-28 object-cover rounded-lg border border-slate-700">` : `<div class="w-36 h-28 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 text-xs">No Photo</div>`}
+            
+            <div class="flex-1 space-y-1.5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400':'bg-amber-500/20 text-amber-400'}">${r.risk || 'Risk'}</span>
+                    <span class="text-xs text-slate-400 font-semibold">${r.category || 'Hazard'}</span>
+                  </div>
+                  <h4 class="font-extrabold text-white text-base mt-1">${r.title || 'Laporan Hazard'}</h4>
+                </div>
+                <span class="text-xs font-bold px-2.5 py-1 rounded ${r.status==='Selesai'?'bg-emerald-500/20 text-emerald-400':'bg-amber-500/20 text-amber-400'}">
+                  ${r.status || 'Pending'}
+                </span>
+              </div>
+
+              <p class="text-xs text-slate-300 leading-relaxed">${r.desc || '-'}</p>
+              
+              <div class="grid grid-cols-3 gap-2 text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+                <div><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i> Lokasi: <span class="text-slate-200 font-semibold">${r.location || '-'}</span></div>
+                <div><i class="fa-solid fa-truck-monster text-amber-500 mr-1"></i> Unit: <span class="text-slate-200 font-semibold">${r.unit || '-'}</span></div>
+                <div><i class="fa-solid fa-user text-amber-500 mr-1"></i> Pelapor: <span class="text-slate-200 font-semibold">${r.reporter || '-'} (${r.company || '-'})</span></div>
               </div>
             </div>
-            ${isDone 
-              ? `<span class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded font-bold border border-emerald-500/30 flex items-center gap-1">
-                  <i class="fa-solid fa-check-double"></i> ✓ Closed (Selesai)
-                 </span>`
-              : `<button type="button" onclick="markDesktopDone('${r.id}')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-lg shadow-emerald-600/20 cursor-pointer">
-                  <i class="fa-solid fa-check"></i> Verifikasi & Closed (Selesai)
-                 </button>`
-            }
           </div>
-        `;
-      }).join('');
-    }
+        `).join('');
+      }
 
-    function setAppMode(mode) {
-      const mobWrapper = document.getElementById('wrapper-mobile');
-      const dtWrapper = document.getElementById('wrapper-desktop');
-      const btnMob = document.getElementById('btn-mode-mobile');
-      const btnDt = document.getElementById('btn-mode-desktop');
-
-      if (mode === 'mobile') {
-        mobWrapper.classList.remove('hidden');
-        dtWrapper.classList.add('hidden');
-        btnMob.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black";
-        btnDt.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white";
-        switchMobileTab('lapor');
+      // Render Desktop CAPA Table (Verifikasi)
+      const dtCapaContainer = document.getElementById('dt-capa-table');
+      if (cachedReports.length === 0) {
+        dtCapaContainer.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs">Belum ada laporan untuk diverifikasi.</div>`;
       } else {
-        mobWrapper.classList.add('hidden');
-        dtWrapper.classList.remove('hidden');
-        btnDt.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black";
-        btnMob.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white";
-        switchDesktopTab('dashboard');
+        dtCapaContainer.innerHTML = cachedReports.map(r => {
+          const isDone = (r.status || '').toLowerCase().includes('selesai');
+          return `
+            <div class="bg-[#1e293b]/70 p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+              <div class="flex items-center gap-4 w-full md:w-auto">
+                ${r.photo ? `<img src="${r.photo}" class="w-14 h-14 object-cover rounded-lg border border-slate-700">` : `<div class="w-14 h-14 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 text-[10px]">No Photo</div>`}
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400':'bg-amber-500/20 text-amber-400'}">${r.risk || 'Risk'}</span>
+                    <span class="text-xs text-slate-400">ID: #${r.id}</span>
+                  </div>
+                  <h4 class="font-bold text-white text-sm mt-0.5">${r.title || 'Temuan Hazard'}</h4>
+                  <p class="text-xs text-slate-400">Lokasi: ${r.location || '-'} | Pelapor: ${r.reporter || '-'}</p>
+                </div>
+              </div>
+
+              <div class="w-full md:w-auto text-right">
+                ${isDone 
+                  ? `<span class="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-lg text-xs font-bold">
+                      <i class="fa-solid fa-circle-check"></i> Closed (Selesai)
+                     </span>`
+                  : `<button type="button" onclick="markDesktopDone(${r.id})" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-lg text-xs transition-all shadow-lg shadow-emerald-600/20 active:scale-95 cursor-pointer">
+                      <i class="fa-solid fa-check mr-1.5"></i> Verifikasi & Closed (Selesai)
+                     </button>`
+                }
+              </div>
+            </div>
+          `;
+        }).join('');
       }
     }
 
-    function switchMobileTab(tab) {
-      document.querySelectorAll('.m-page-section').forEach(sec => sec.classList.add('hidden'));
-      document.querySelectorAll('.nav-btn-mb').forEach(btn => btn.classList.remove('active'));
-
-      if (tab === 'lapor') {
-        document.getElementById('m-page-lapor').classList.remove('hidden');
-        document.getElementById('m-btn-lapor').classList.add('active');
-      } else {
-        document.getElementById('m-page-history').classList.remove('hidden');
-        document.getElementById('m-btn-history').classList.add('active');
-      }
+    // Tab & Mode Controller
+    function setAppMode(m) {
+      document.getElementById('wrapper-mobile').classList.toggle('hidden', m !== 'mobile');
+      document.getElementById('wrapper-desktop').classList.toggle('hidden', m !== 'desktop');
+      
+      document.getElementById('btn-mode-mobile').className = m === 'mobile' ? 'px-3 py-1.5 text-xs font-bold rounded-md bg-amber-500 text-black transition-all' : 'px-3 py-1.5 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
+      document.getElementById('btn-mode-desktop').className = m === 'desktop' ? 'px-3 py-1.5 text-xs font-bold rounded-md bg-amber-500 text-black transition-all' : 'px-3 py-1.5 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all';
     }
 
-    function switchDesktopTab(tab) {
-      document.querySelectorAll('.dt-page-section').forEach(sec => sec.classList.add('hidden'));
-      document.querySelectorAll('.nav-btn-dt').forEach(btn => btn.classList.remove('active'));
+    function switchMobileTab(t) {
+      document.getElementById('m-page-lapor').classList.toggle('hidden', t !== 'lapor');
+      document.getElementById('m-page-history').classList.toggle('hidden', t !== 'history');
 
-      document.getElementById('dt-page-' + tab).classList.remove('hidden');
-      document.getElementById('dt-btn-' + tab).classList.add('active');
+      document.getElementById('m-btn-lapor').classList.toggle('active', t === 'lapor');
+      document.getElementById('m-btn-history').classList.toggle('active', t === 'history');
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
+    function switchDesktopTab(t) {
+      document.getElementById('dt-page-dashboard').classList.toggle('hidden', t !== 'dashboard');
+      document.getElementById('dt-page-verifikasi').classList.toggle('hidden', t !== 'verifikasi');
+
+      document.getElementById('dt-btn-dashboard').classList.toggle('active', t === 'dashboard');
+      document.getElementById('dt-btn-verifikasi').classList.toggle('active', t === 'verifikasi');
+    }
+
+    // Init App & Supabase Realtime Listener
+    document.addEventListener("DOMContentLoaded", () => {
       fetchReports();
-
-      supabaseClient
-        .channel('public:' + TABLE_NAME)
-        .on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, (payload) => {
-          fetchReports();
-        })
+      
+      // Auto Listen Realtime Postgres Changes
+      supabaseClient.channel('public:' + TABLE_NAME)
+        .on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, () => fetchReports())
         .subscribe();
     });
   </script>
