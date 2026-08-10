@@ -87,7 +87,7 @@
       <!-- Mobile Scrollable Body -->
       <div class="p-4 overflow-y-auto flex-1 space-y-4">
 
-        <!-- SUB-TAB HP 1: FORMULIR PELAPORAN LAPANGAN (SANGAT LENGKAP) -->
+        <!-- SUB-TAB HP 1: FORMULIR PELAPORAN LAPANGAN -->
         <div id="m-page-lapor" class="m-page-section">
           <form id="mobile-hazard-form" onsubmit="submitMobileHazard(event)" class="space-y-4">
             
@@ -318,13 +318,21 @@
 
 
   <!-- ========================================== -->
-  <!-- JAVASCRIPT SYSTEM ENGINE -->
+  <!-- JAVASCRIPT SYSTEM ENGINE (FIXED FULL SYNC) -->
   <!-- ========================================== -->
   <script>
-    // Storage Utama
-    let hazardReports = JSON.parse(localStorage.getItem('cs360_field_reports')) || [];
+    // Key Penyimpanan Sama untuk Mobile & Desktop
+    const STORAGE_KEY = 'cs360_field_reports';
 
-    // Switch Main App Mode (HP vs Laptop)
+    function getReports() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    }
+
+    function saveReports(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    // Switch Main App Mode (HP vs Laptop) & Auto Sync
     function setAppMode(mode) {
       const mobWrapper = document.getElementById('wrapper-mobile');
       const dtWrapper = document.getElementById('wrapper-desktop');
@@ -336,12 +344,14 @@
         dtWrapper.classList.add('hidden');
         btnMob.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black";
         btnDt.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white";
+        switchMobileTab('lapor');
       } else {
         mobWrapper.classList.add('hidden');
         dtWrapper.classList.remove('hidden');
         btnDt.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black";
         btnMob.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white";
         renderDesktop();
+        switchDesktopTab('dashboard');
       }
     }
 
@@ -374,6 +384,8 @@
     function submitMobileHazard(e) {
       e.preventDefault();
 
+      const reports = getReports();
+
       const newReport = {
         id: Date.now(),
         shift: document.getElementById('m-shift').value,
@@ -390,23 +402,31 @@
         date: new Date().toLocaleString('id-ID')
       };
 
-      hazardReports.unshift(newReport);
-      localStorage.setItem('cs360_field_reports', JSON.stringify(hazardReports));
+      reports.unshift(newReport);
+      saveReports(reports);
 
       document.getElementById('mobile-hazard-form').reset();
       alert('✅ LAPORAN HAZARD BERHASIL DIKIRIM KE CONTROL ROOM!');
+      
+      // Auto Sync Keduanya
+      renderMobileHistory();
+      renderDesktop();
       switchMobileTab('history');
     }
 
     // Render Mobile History
     function renderMobileHistory() {
+      const reports = getReports();
       const container = document.getElementById('m-reports-list');
-      if (hazardReports.length === 0) {
+      
+      if (!container) return;
+
+      if (reports.length === 0) {
         container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Belum ada laporan terkirim.</p>`;
         return;
       }
 
-      container.innerHTML = hazardReports.map(r => `
+      container.innerHTML = reports.map(r => `
         <div class="bg-[#0f172a] p-3 rounded-lg border border-slate-700 text-xs space-y-1">
           <div class="flex justify-between items-center">
             <span class="font-bold text-amber-400">${r.category}</span>
@@ -424,21 +444,30 @@
 
     // Render Desktop Control Room
     function renderDesktop() {
-      document.getElementById('dt-stat-total').innerText = hazardReports.length;
-      document.getElementById('dt-stat-pending').innerText = hazardReports.filter(r => r.status === 'Pending Review').length;
-      document.getElementById('dt-stat-done').innerText = hazardReports.filter(r => r.status === 'Selesai').length;
-      document.getElementById('dt-stat-high').innerText = hazardReports.filter(r => r.risk === 'Tinggi').length;
+      const reports = getReports();
+
+      const elTotal = document.getElementById('dt-stat-total');
+      const elPending = document.getElementById('dt-stat-pending');
+      const elDone = document.getElementById('dt-stat-done');
+      const elHigh = document.getElementById('dt-stat-high');
+
+      if (elTotal) elTotal.innerText = reports.length;
+      if (elPending) elPending.innerText = reports.filter(r => r.status === 'Pending Review').length;
+      if (elDone) elDone.innerText = reports.filter(r => r.status === 'Selesai').length;
+      if (elHigh) elHigh.innerText = reports.filter(r => r.risk === 'Tinggi').length;
 
       const feed = document.getElementById('dt-reports-feed');
       const capa = document.getElementById('dt-capa-table');
 
-      if (hazardReports.length === 0) {
+      if (!feed || !capa) return;
+
+      if (reports.length === 0) {
         feed.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Belum ada laporan lapangan masuk.</p>`;
         capa.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada data verifikasi CAPA.</p>`;
         return;
       }
 
-      feed.innerHTML = hazardReports.map(r => `
+      feed.innerHTML = reports.map(r => `
         <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 space-y-2">
           <div class="flex justify-between items-start">
             <div>
@@ -459,7 +488,7 @@
         </div>
       `).join('');
 
-      capa.innerHTML = hazardReports.map(r => `
+      capa.innerHTML = reports.map(r => `
         <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
           <div>
             <p class="font-bold text-white text-sm">${r.title}</p>
@@ -473,10 +502,18 @@
     }
 
     function markDesktopDone(id) {
-      hazardReports = hazardReports.map(r => r.id === id ? {...r, status: 'Selesai'} : r);
-      localStorage.setItem('cs360_field_reports', JSON.stringify(hazardReports));
+      let reports = getReports();
+      reports = reports.map(r => r.id === id ? {...r, status: 'Selesai'} : r);
+      saveReports(reports);
       renderDesktop();
+      renderMobileHistory();
     }
+
+    // Running otomatis saat pertama kali dibuka
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMobileHistory();
+      renderDesktop();
+    });
   </script>
 </body>
 </html>
