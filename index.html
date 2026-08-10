@@ -250,7 +250,7 @@
 
   <!-- SCRIPT KONEKSI SUPABASE ENGINE -->
   <script>
-    // KREDENSIAL SUPABASE LANGSUNG DARI CREDENTIALS KAMU
+    // KREDENSIAL SUPABASE
     const SUPABASE_URL = 'https://ztgjmyjrtrlyrgntvtny.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_GGh8txjx_3OFYwmTGdccjQ_zkxRYqep';
     const TABLE_NAME = 'tambang';
@@ -258,7 +258,6 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let cachedReports = [];
 
-    // Ambil Data dari Supabase (Coba urutkan dari ID, jika gagal kembalikan data tanpa order)
     async function fetchReports() {
       let { data, error } = await supabaseClient
         .from(TABLE_NAME)
@@ -266,7 +265,6 @@
         .order('id', { ascending: false });
 
       if (error) {
-        // Fallback jika primary key bukan id / error sorting
         const fallback = await supabaseClient.from(TABLE_NAME).select('*');
         if (fallback.error) {
           console.error('Error fetching Supabase data:', fallback.error.message);
@@ -279,7 +277,6 @@
       renderAllViews();
     }
 
-    // Direct Input dari HP ke Supabase Database
     async function submitMobileHazard(e) {
       e.preventDefault();
       const btn = document.getElementById('btn-submit');
@@ -317,7 +314,6 @@
       btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE`;
     }
 
-    // Status Closed di Control Room Laptop (Bisa handle String/UUID maupun Integer)
     async function markDesktopDone(reportId) {
       const { error } = await supabaseClient
         .from(TABLE_NAME)
@@ -332,7 +328,6 @@
       }
     }
 
-    // Render Tampilan Mobile & Desktop
     function renderAllViews() {
       renderMobileHistory();
       renderDesktop();
@@ -423,7 +418,6 @@
       `).join('');
     }
 
-    // Toggle Modes & Tabs
     function setAppMode(mode) {
       const mobWrapper = document.getElementById('wrapper-mobile');
       const dtWrapper = document.getElementById('wrapper-desktop');
@@ -466,7 +460,6 @@
       document.getElementById('dt-btn-' + tab).classList.add('active');
     }
 
-    // Auto Listening Supabase Realtime Broadcast Channel
     document.addEventListener("DOMContentLoaded", function() {
       fetchReports();
 
