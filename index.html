@@ -3,11 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>COALSAFE 360 - Mobile Field & Command Center</title>
+  <title>COALSAFE 360 - Realtime Cloud HSE System</title>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- SUPABASE JS CLIENT LIBRARY -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     body {
@@ -18,19 +23,16 @@
     .page-section { display: none; }
     .page-section.active { display: block; }
     
-    /* Active Style Navigasi Desktop */
     .nav-btn-dt.active {
       background-color: #1e293b;
       color: #f59e0b;
       border-left: 4px solid #f59e0b;
     }
 
-    /* Active Style Navigasi HP (Bottom Bar) */
     .nav-btn-mb.active {
       color: #f59e0b;
     }
 
-    /* Simulation Frame HP di Desktop */
     .mobile-frame {
       max-width: 450px;
       margin: 0 auto;
@@ -49,11 +51,10 @@
       <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center font-black text-black text-lg">C</div>
       <div>
         <h1 class="text-sm font-bold text-white tracking-wider">COALSAFE 360</h1>
-        <p class="text-[10px] text-amber-500 font-semibold">MINE HSE SYSTEM</p>
+        <p class="text-[10px] text-amber-500 font-semibold">MINE HSE SYSTEM (SUPABASE LIVE)</p>
       </div>
     </div>
 
-    <!-- Toggle Mode Display -->
     <div class="flex bg-[#1e293b] p-1 rounded-lg border border-slate-700">
       <button onclick="setAppMode('mobile')" id="btn-mode-mobile" class="px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black">
         <i class="fa-solid fa-mobile-screen-button"></i> Mode HP (Lapangan)
@@ -64,17 +65,14 @@
     </div>
   </header>
 
-  <!-- ========================================== -->
-  <!-- MODE 1: LAPANGAN / HP (MOBILE APP SIMULATION) -->
-  <!-- ========================================== -->
+  <!-- MODE HP (LAPANGAN) -->
   <div id="wrapper-mobile" class="flex-1 p-2 sm:p-4 my-2">
     <div class="mobile-frame min-h-[85vh] flex flex-col justify-between overflow-hidden relative pb-16">
       
-      <!-- Mobile Header -->
       <div class="bg-[#1e293b] p-4 border-b border-slate-800 flex justify-between items-center">
         <div>
           <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30">
-            <i class="fa-solid fa-wifi mr-1"></i> ONLINE & SYNC
+            <i class="fa-solid fa-database text-xs mr-1"></i> SUPABASE CONNECTED
           </span>
           <h2 class="text-sm font-bold text-white mt-1">E-Hazard Report Mandor</h2>
           <p class="text-[10px] text-slate-400">Pit Central Corridor - Shift 1 (Day)</p>
@@ -84,19 +82,16 @@
         </div>
       </div>
 
-      <!-- Mobile Scrollable Body -->
       <div class="p-4 overflow-y-auto flex-1 space-y-4">
 
-        <!-- SUB-TAB HP 1: FORMULIR PELAPORAN LAPANGAN -->
         <div id="m-page-lapor" class="m-page-section">
           <form id="mobile-hazard-form" onsubmit="submitMobileHazard(event)" class="space-y-4">
             
             <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-xs text-amber-300 flex items-center gap-2">
               <i class="fa-solid fa-triangle-exclamation text-base"></i>
-              <span>Laporkan bahaya K3/KO segera sebelum terjadi kecelakaan kerja!</span>
+              <span>Laporan langsung tersimpan di Supabase & tampil di Laptop!</span>
             </div>
 
-            <!-- Tanggal & Shift -->
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="block text-[11px] font-semibold text-slate-300 mb-1">Shift Kerja</label>
@@ -116,86 +111,66 @@
               </div>
             </div>
 
-            <!-- Judul Temuan -->
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1">Judul Temuan Bahaya</label>
               <input type="text" id="m-title" required placeholder="Misal: Tangga Excavator PC2000 Retak" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
             </div>
 
-            <!-- Spesifik Lokasi & Alat -->
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Area / Blok Lokasi</label>
-                <input type="text" id="m-location" required placeholder="Contoh: Disposal Pit West A" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Area / Lokasi</label>
+                <input type="text" id="m-location" required placeholder="Contoh: Pit West A" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">No. Unit / Alat (Opsional)</label>
-                <input type="text" id="m-unit" placeholder="Contoh: DT-882 / EX-05" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">No. Unit / Alat</label>
+                <input type="text" id="m-unit" placeholder="Contoh: DT-882" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
               </div>
             </div>
 
-            <!-- Tingkat Risk Matrix -->
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1">Matriks Tingkat Risiko</label>
               <select id="m-risk" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500">
-                <option value="Rendah">🟢 Rendah (Low Risk - Dapat Ditunda)</option>
-                <option value="Sedang" selected>🟡 Sedang (Medium Risk - Perlu Tindakan 1x24 Jam)</option>
-                <option value="Tinggi">🔴 Tinggi / Kritis (High Risk - Stop Pekerjaan!)</option>
+                <option value="Rendah">🟢 Rendah (Low Risk)</option>
+                <option value="Sedang" selected>🟡 Sedang (Medium Risk)</option>
+                <option value="Tinggi">🔴 Tinggi / Kritis (High Risk)</option>
               </select>
             </div>
 
-            <!-- Deskripsi Detail -->
             <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rincian Kronologi & Potensi Bahaya</label>
-              <textarea id="m-desc" rows="3" required placeholder="Jelaskan secara mendetail apa yang ditemukan di lapangan..." class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none"></textarea>
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Rincian Bahaya</label>
+              <textarea id="m-desc" rows="3" required placeholder="Jelaskan detail bahaya..." class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none"></textarea>
             </div>
 
-            <!-- Tindakan Langsung -->
             <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Tindakan Langsung yang Sudah Diambil (Koreksi Awal)</label>
-              <input type="text" id="m-action" placeholder="Misal: Memasang Barricade line & memberi marka bahaya" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Tindakan Langsung</label>
+              <input type="text" id="m-action" placeholder="Koreksi awal..." class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
             </div>
 
-            <!-- Upload Foto Bukti Lapangan -->
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Foto Bukti Temuan (Kamera HP)</label>
-              <div class="border-2 border-dashed border-slate-700 rounded-lg p-3 text-center bg-[#0f172a] hover:border-amber-500 transition cursor-pointer">
-                <i class="fa-solid fa-camera text-2xl text-amber-500 mb-1"></i>
-                <p class="text-[10px] text-slate-400">Klik untuk Ambil Foto / Upload Dokumen</p>
-                <input type="file" accept="image/*" class="hidden" id="m-photo-input">
-              </div>
-            </div>
-
-            <!-- Pelapor -->
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nama Pelapor / Pengawas</label>
-                <input type="text" id="m-reporter" required value="Budi Santoso (Mandor Pit)" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white">
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Pelapor</label>
+                <input type="text" id="m-reporter" required value="Budi Santoso" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white">
               </div>
               <div>
-                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Perusahaan / Subkon</label>
+                <label class="block text-[11px] font-semibold text-slate-300 mb-1">Perusahaan</label>
                 <input type="text" id="m-company" required value="PT Batubara Utama" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white">
               </div>
             </div>
 
-            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-extrabold py-3 rounded-lg text-xs transition shadow-lg shadow-amber-500/20 uppercase tracking-wider flex items-center justify-center gap-2">
-              <i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN LAPANGAN
+            <button type="submit" id="btn-submit" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-extrabold py-3 rounded-lg text-xs transition shadow-lg shadow-amber-500/20 uppercase tracking-wider flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE
             </button>
 
           </form>
         </div>
 
-        <!-- SUB-TAB HP 2: RIWAYAT LAPORAN LAPANGAN MANDOR -->
         <div id="m-page-history" class="m-page-section hidden space-y-3">
-          <h3 class="text-xs font-bold text-white border-b border-slate-800 pb-2">Daftar Laporan Terkirim (Tersimpan Local)</h3>
-          <div id="m-reports-list" class="space-y-2">
-            <!-- Populated by JS -->
-          </div>
+          <h3 class="text-xs font-bold text-white border-b border-slate-800 pb-2">Daftar Laporan Terkirim (Supabase)</h3>
+          <div id="m-reports-list" class="space-y-2"></div>
         </div>
 
       </div>
 
-      <!-- Mobile Bottom Navigation Bar -->
       <div class="absolute bottom-0 left-0 right-0 bg-[#111827] border-t border-slate-800 flex justify-around py-2">
         <button onclick="switchMobileTab('lapor')" id="m-btn-lapor" class="nav-btn-mb active flex flex-col items-center text-slate-400">
           <i class="fa-solid fa-pen-to-square text-base"></i>
@@ -203,20 +178,15 @@
         </button>
         <button onclick="switchMobileTab('history')" id="m-btn-history" class="nav-btn-mb flex flex-col items-center text-slate-400">
           <i class="fa-solid fa-clock-rotate-left text-base"></i>
-          <span class="text-[10px] mt-0.5 font-bold">Riwayat Saya</span>
+          <span class="text-[10px] mt-0.5 font-bold">Riwayat Live</span>
         </button>
       </div>
 
     </div>
   </div>
 
-
-  <!-- ========================================== -->
-  <!-- MODE 2: DESKTOP / CONTROL ROOM LAPTOP MODE -->
-  <!-- ========================================== -->
+  <!-- MODE LAPTOP (DESKTOP CONTROL ROOM) -->
   <div id="wrapper-desktop" class="hidden flex-1 flex flex-col md:flex-row min-h-[90vh]">
-    
-    <!-- Sidebar Left Desktop -->
     <aside class="w-64 bg-[#111827] border-r border-slate-800 p-4 flex flex-col justify-between">
       <div class="space-y-4">
         <div class="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">HSE Control Room</div>
@@ -229,25 +199,17 @@
             <i class="fa-solid fa-check-double w-4"></i>
             <span>Verifikasi & CAPA</span>
           </button>
-          <button onclick="switchDesktopTab('inspeksi')" id="dt-btn-inspeksi" class="nav-btn-dt w-full flex items-center space-x-3 px-4 py-3 rounded-r-lg text-xs font-semibold text-gray-300 hover:bg-slate-800 transition">
-            <i class="fa-solid fa-truck-monster w-4"></i>
-            <span>Inspeksi Alat Berat</span>
-          </button>
         </nav>
       </div>
 
       <div class="p-3 bg-[#1e293b] rounded-lg border border-slate-700 text-xs">
         <p class="font-bold text-amber-400">HSE Officer Monitor</p>
-        <p class="text-[10px] text-slate-400">Logged in: Head Office HSE</p>
+        <p class="text-[10px] text-slate-400">Supabase: <span class="text-emerald-400 font-bold">Connected</span></p>
       </div>
     </aside>
 
-    <!-- Content Desktop Area -->
     <main class="flex-1 p-6 space-y-6 overflow-y-auto">
-      
-      <!-- DESKTOP TAB 1: DASHBOARD STATS & FEED -->
       <div id="dt-page-dashboard" class="dt-page-section space-y-6">
-        <!-- Stats Row -->
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div class="bg-[#111827] p-5 rounded-xl border border-slate-800">
             <p class="text-xs text-slate-400 font-medium">TOTAL LAPORAN MASUK</p>
@@ -267,127 +229,59 @@
           </div>
         </div>
 
-        <!-- Master Table / Feed Laporan -->
         <div class="bg-[#111827] p-6 rounded-xl border border-slate-800 space-y-4">
           <h3 class="text-base font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-list text-amber-500"></i> FEED REAL-TIME TEMUAN LAPANGAN
           </h3>
           <div id="dt-reports-feed" class="space-y-3">
-            <!-- Populated by JS -->
+            <p class="text-xs text-slate-400 text-center py-6">Memuat data dari Supabase...</p>
           </div>
         </div>
       </div>
 
-      <!-- DESKTOP TAB 2: VERIFIKASI & CAPA -->
       <div id="dt-page-verifikasi" class="dt-page-section hidden space-y-6">
         <div class="bg-[#111827] p-6 rounded-xl border border-slate-800">
           <h3 class="text-base font-bold text-white mb-2">Verifikasi Laporan & Actions CAPA</h3>
-          <p class="text-xs text-slate-400 mb-4">Setujui atau perbarui status perbaikan tindakan korektif dari pengawas lapangan.</p>
-          <div id="dt-capa-table" class="space-y-3">
-            <!-- Populated by JS -->
-          </div>
+          <div id="dt-capa-table" class="space-y-3"></div>
         </div>
       </div>
-
-      <!-- DESKTOP TAB 3: INSPEKSI ALAT BERAT -->
-      <div id="dt-page-inspeksi" class="dt-page-section hidden space-y-6">
-        <div class="bg-[#111827] p-6 rounded-xl border border-slate-800">
-          <h3 class="text-base font-bold text-white mb-4">Monitoring P2H & Inspeksi Alat Berat Tambang</h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700">
-              <h4 class="font-bold text-amber-400 text-sm">Excavator Komatsu PC2000</h4>
-              <p class="text-xs text-slate-300 mt-1">Pit Central - Operating OK</p>
-              <span class="inline-block mt-3 text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Lulus P2H Harian</span>
-            </div>
-            <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700">
-              <h4 class="font-bold text-amber-400 text-sm">Dump Truck CAT 785C</h4>
-              <p class="text-xs text-slate-300 mt-1">Hauling Road - Brake Warning</p>
-              <span class="inline-block mt-3 text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded">Breakdown / Maintenance</span>
-            </div>
-            <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700">
-              <h4 class="font-bold text-amber-400 text-sm">Dozer Cat D375A</h4>
-              <p class="text-xs text-slate-300 mt-1">Disposal Area - Operating OK</p>
-              <span class="inline-block mt-3 text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Lulus P2H Harian</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </main>
   </div>
 
-
-  <!-- ========================================== -->
-  <!-- JAVASCRIPT SYSTEM ENGINE (FIXED FULL SYNC) -->
-  <!-- ========================================== -->
+  <!-- SCRIPT KONEKSI SUPABASE ENGINE -->
   <script>
-    // Key Penyimpanan Sama untuk Mobile & Desktop
-    const STORAGE_KEY = 'cs360_field_reports';
+    // KREDENSIAL SUPABASE SAMA SEPERTI DI FITUR SAWIT/BIBIT
+    const SUPABASE_URL = 'https://ztgjmyjrtrlyrgntvtny.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_GGh8txjx_3OFYwmTGdccjQ_zkxRYqep';
+    const TABLE_NAME = 'hse_inspection'; // Sesuaikan dengan nama tabel di Supabase kamu
 
-    function getReports() {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    }
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let cachedReports = [];
 
-    function saveReports(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
+    // Ambil Data dari Supabase
+    async function fetchReports() {
+      const { data, error } = await supabaseClient
+        .from(TABLE_NAME)
+        .select('*')
+        .order('id', { ascending: false });
 
-    // Switch Main App Mode (HP vs Laptop) & Auto Sync
-    function setAppMode(mode) {
-      const mobWrapper = document.getElementById('wrapper-mobile');
-      const dtWrapper = document.getElementById('wrapper-desktop');
-      const btnMob = document.getElementById('btn-mode-mobile');
-      const btnDt = document.getElementById('btn-mode-desktop');
-
-      if (mode === 'mobile') {
-        mobWrapper.classList.remove('hidden');
-        dtWrapper.classList.add('hidden');
-        btnMob.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black";
-        btnDt.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white";
-        switchMobileTab('lapor');
-      } else {
-        mobWrapper.classList.add('hidden');
-        dtWrapper.classList.remove('hidden');
-        btnDt.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black";
-        btnMob.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white";
-        renderDesktop();
-        switchDesktopTab('dashboard');
+      if (error) {
+        console.error('Error fetching Supabase data:', error.message);
+        return;
       }
+
+      cachedReports = data || [];
+      renderAllViews();
     }
 
-    // Switch Sub Tab Mobile (HP)
-    function switchMobileTab(tab) {
-      document.querySelectorAll('.m-page-section').forEach(sec => sec.classList.add('hidden'));
-      document.querySelectorAll('.nav-btn-mb').forEach(btn => btn.classList.remove('active'));
-
-      if (tab === 'lapor') {
-        document.getElementById('m-page-lapor').classList.remove('hidden');
-        document.getElementById('m-btn-lapor').classList.add('active');
-      } else {
-        document.getElementById('m-page-history').classList.remove('hidden');
-        document.getElementById('m-btn-history').classList.add('active');
-        renderMobileHistory();
-      }
-    }
-
-    // Switch Sub Tab Desktop (Laptop)
-    function switchDesktopTab(tab) {
-      document.querySelectorAll('.dt-page-section').forEach(sec => sec.classList.add('hidden'));
-      document.querySelectorAll('.nav-btn-dt').forEach(btn => btn.classList.remove('active'));
-
-      document.getElementById('dt-page-' + tab).classList.remove('hidden');
-      document.getElementById('dt-btn-' + tab).classList.add('active');
-      renderDesktop();
-    }
-
-    // Submit Form Lapangan (Mobile)
-    function submitMobileHazard(e) {
+    // Direct Input dari HP ke Supabase Database
+    async function submitMobileHazard(e) {
       e.preventDefault();
-
-      const reports = getReports();
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+      btn.innerText = "Mengirim...";
 
       const newReport = {
-        id: Date.now(),
         shift: document.getElementById('m-shift').value,
         category: document.getElementById('m-category').value,
         title: document.getElementById('m-title').value,
@@ -395,38 +289,59 @@
         unit: document.getElementById('m-unit').value || '-',
         risk: document.getElementById('m-risk').value,
         desc: document.getElementById('m-desc').value,
-        action: document.getElementById('m-action').value || 'Belum ada tindakan langsung',
+        action: document.getElementById('m-action').value || 'Belum ada tindakan',
         reporter: document.getElementById('m-reporter').value,
         company: document.getElementById('m-company').value,
-        status: 'Pending Review',
-        date: new Date().toLocaleString('id-ID')
+        status: 'Pending Review'
       };
 
-      reports.unshift(newReport);
-      saveReports(reports);
+      const { data, error } = await supabaseClient
+        .from(TABLE_NAME)
+        .insert([newReport]);
 
-      document.getElementById('mobile-hazard-form').reset();
-      alert('✅ LAPORAN HAZARD BERHASIL DIKIRIM KE CONTROL ROOM!');
-      
-      // Auto Sync Keduanya
-      renderMobileHistory();
-      renderDesktop();
-      switchMobileTab('history');
+      if (error) {
+        alert('Gagal simpan ke Supabase: ' + error.message);
+      } else {
+        document.getElementById('mobile-hazard-form').reset();
+        alert('✅ LAPORAN TERKIRIM KE SUPABASE!');
+        fetchReports();
+        switchMobileTab('history');
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE`;
     }
 
-    // Render Mobile History
+    // Status Closed di Control Room Laptop
+    async function markDesktopDone(reportId) {
+      const { error } = await supabaseClient
+        .from(TABLE_NAME)
+        .update({ status: 'Selesai' })
+        .eq('id', reportId);
+
+      if (error) {
+        alert('Gagal update status: ' + error.message);
+      } else {
+        fetchReports();
+      }
+    }
+
+    // Render Tampilan Mobile & Desktop
+    function renderAllViews() {
+      renderMobileHistory();
+      renderDesktop();
+    }
+
     function renderMobileHistory() {
-      const reports = getReports();
       const container = document.getElementById('m-reports-list');
-      
       if (!container) return;
 
-      if (reports.length === 0) {
+      if (cachedReports.length === 0) {
         container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Belum ada laporan terkirim.</p>`;
         return;
       }
 
-      container.innerHTML = reports.map(r => `
+      container.innerHTML = cachedReports.map(r => `
         <div class="bg-[#0f172a] p-3 rounded-lg border border-slate-700 text-xs space-y-1">
           <div class="flex justify-between items-center">
             <span class="font-bold text-amber-400">${r.category}</span>
@@ -442,32 +357,29 @@
       `).join('');
     }
 
-    // Render Desktop Control Room
     function renderDesktop() {
-      const reports = getReports();
-
       const elTotal = document.getElementById('dt-stat-total');
       const elPending = document.getElementById('dt-stat-pending');
       const elDone = document.getElementById('dt-stat-done');
       const elHigh = document.getElementById('dt-stat-high');
 
-      if (elTotal) elTotal.innerText = reports.length;
-      if (elPending) elPending.innerText = reports.filter(r => r.status === 'Pending Review').length;
-      if (elDone) elDone.innerText = reports.filter(r => r.status === 'Selesai').length;
-      if (elHigh) elHigh.innerText = reports.filter(r => r.risk === 'Tinggi').length;
+      if (elTotal) elTotal.innerText = cachedReports.length;
+      if (elPending) elPending.innerText = cachedReports.filter(r => r.status === 'Pending Review').length;
+      if (elDone) elDone.innerText = cachedReports.filter(r => r.status === 'Selesai').length;
+      if (elHigh) elHigh.innerText = cachedReports.filter(r => r.risk === 'Tinggi').length;
 
       const feed = document.getElementById('dt-reports-feed');
       const capa = document.getElementById('dt-capa-table');
 
       if (!feed || !capa) return;
 
-      if (reports.length === 0) {
+      if (cachedReports.length === 0) {
         feed.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Belum ada laporan lapangan masuk.</p>`;
         capa.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">Belum ada data verifikasi CAPA.</p>`;
         return;
       }
 
-      feed.innerHTML = reports.map(r => `
+      feed.innerHTML = cachedReports.map(r => `
         <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 space-y-2">
           <div class="flex justify-between items-start">
             <div>
@@ -488,7 +400,7 @@
         </div>
       `).join('');
 
-      capa.innerHTML = reports.map(r => `
+      capa.innerHTML = cachedReports.map(r => `
         <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
           <div>
             <p class="font-bold text-white text-sm">${r.title}</p>
@@ -501,18 +413,59 @@
       `).join('');
     }
 
-    function markDesktopDone(id) {
-      let reports = getReports();
-      reports = reports.map(r => r.id === id ? {...r, status: 'Selesai'} : r);
-      saveReports(reports);
-      renderDesktop();
-      renderMobileHistory();
+    // Toggle Modes & Tabs
+    function setAppMode(mode) {
+      const mobWrapper = document.getElementById('wrapper-mobile');
+      const dtWrapper = document.getElementById('wrapper-desktop');
+      const btnMob = document.getElementById('btn-mode-mobile');
+      const btnDt = document.getElementById('btn-mode-desktop');
+
+      if (mode === 'mobile') {
+        mobWrapper.classList.remove('hidden');
+        dtWrapper.classList.add('hidden');
+        btnMob.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black";
+        btnDt.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white";
+        switchMobileTab('lapor');
+      } else {
+        mobWrapper.classList.add('hidden');
+        dtWrapper.classList.remove('hidden');
+        btnDt.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 bg-amber-500 text-black";
+        btnMob.className = "px-3 py-1 text-xs font-bold rounded-md transition flex items-center gap-1.5 text-slate-400 hover:text-white";
+        switchDesktopTab('dashboard');
+      }
     }
 
-    // Running otomatis saat pertama kali dibuka
+    function switchMobileTab(tab) {
+      document.querySelectorAll('.m-page-section').forEach(sec => sec.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn-mb').forEach(btn => btn.classList.remove('active'));
+
+      if (tab === 'lapor') {
+        document.getElementById('m-page-lapor').classList.remove('hidden');
+        document.getElementById('m-btn-lapor').classList.add('active');
+      } else {
+        document.getElementById('m-page-history').classList.remove('hidden');
+        document.getElementById('m-btn-history').classList.add('active');
+      }
+    }
+
+    function switchDesktopTab(tab) {
+      document.querySelectorAll('.dt-page-section').forEach(sec => sec.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn-dt').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById('dt-page-' + tab).classList.remove('hidden');
+      document.getElementById('dt-btn-' + tab).classList.add('active');
+    }
+
+    // Auto Listening Supabase Realtime Channel
     document.addEventListener("DOMContentLoaded", function() {
-      renderMobileHistory();
-      renderDesktop();
+      fetchReports();
+
+      supabaseClient
+        .channel('schema-db-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, () => {
+          fetchReports(); // Otomatis refresh begitu ada insert/update baru di HP
+        })
+        .subscribe();
     });
   </script>
 </body>
