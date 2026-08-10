@@ -116,6 +116,15 @@
               <input type="text" id="m-title" required placeholder="Misal: Tangga Excavator PC2000 Retak" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
             </div>
 
+            <!-- FITUR FOTO BUKTI LAPANGAN -->
+            <div>
+              <label class="block text-[11px] font-semibold text-amber-400 mb-1"><i class="fa-solid fa-camera mr-1"></i> Foto Bukti Temuan Bahaya</label>
+              <input type="file" id="m-photo" accept="image/*" onchange="previewPhoto(event)" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-400 hover:file:bg-amber-500/30">
+              <div id="photo-preview-container" class="mt-2 hidden">
+                <img id="photo-preview" src="" class="max-h-36 rounded-lg border border-slate-700 object-cover w-full">
+              </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="block text-[11px] font-semibold text-slate-300 mb-1">Area / Lokasi</label>
@@ -241,7 +250,7 @@
 
       <div id="dt-page-verifikasi" class="dt-page-section hidden space-y-6">
         <div class="bg-[#111827] p-6 rounded-xl border border-slate-800">
-          <h3 class="text-base font-bold text-white mb-2">Verifikasi Laporan & Actions CAPA</h3>
+          <h3 class="text-base font-bold text-white mb-4">Verifikasi Laporan & Actions CAPA</h3>
           <div id="dt-capa-table" class="space-y-3"></div>
         </div>
       </div>
@@ -250,13 +259,26 @@
 
   <!-- SCRIPT KONEKSI SUPABASE ENGINE -->
   <script>
-    // KREDENSIAL SUPABASE
     const SUPABASE_URL = 'https://ztgjmyjrtrlyrgntvtny.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_GGh8txjx_3OFYwmTGdccjQ_zkxRYqep';
-    const TABLE_NAME = 'tambang';
+    const TABLE_NAME = 'hse_inspection';
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let cachedReports = [];
+    let photoBase64 = null;
+
+    function previewPhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          photoBase64 = e.target.result;
+          document.getElementById('photo-preview').src = photoBase64;
+          document.getElementById('photo-preview-container').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
     async function fetchReports() {
       let { data, error } = await supabaseClient
@@ -265,12 +287,8 @@
         .order('id', { ascending: false });
 
       if (error) {
-        const fallback = await supabaseClient.from(TABLE_NAME).select('*');
-        if (fallback.error) {
-          console.error('Error fetching Supabase data:', fallback.error.message);
-          return;
-        }
-        data = fallback.data;
+        console.error('Error fetching Supabase data:', error.message);
+        return;
       }
 
       cachedReports = data || [];
@@ -294,6 +312,7 @@
         action: document.getElementById('m-action').value || 'Belum ada tindakan',
         reporter: document.getElementById('m-reporter').value,
         company: document.getElementById('m-company').value,
+        photo: photoBase64 || null,
         status: 'Pending Review'
       };
 
@@ -305,7 +324,9 @@
         alert('Gagal simpan ke Supabase: ' + error.message);
       } else {
         document.getElementById('mobile-hazard-form').reset();
-        alert('✅ LAPORAN TERKIRIM KE SUPABASE!');
+        document.getElementById('photo-preview-container').classList.add('hidden');
+        photoBase64 = null;
+        alert('✅ LAPORAN & FOTO TERKIRIM KE SUPABASE!');
         await fetchReports();
         switchMobileTab('history');
       }
@@ -314,6 +335,7 @@
       btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE`;
     }
 
+    // FIX TOMBOL VERIFIKASI
     async function markDesktopDone(reportId) {
       const { error } = await supabaseClient
         .from(TABLE_NAME)
@@ -321,9 +343,9 @@
         .eq('id', reportId);
 
       if (error) {
-        alert('Gagal update status: ' + error.message);
+        alert('Gagal verifikasi laporan: ' + error.message);
       } else {
-        alert('✅ Status berhasil diubah menjadi Selesai!');
+        alert('✅ Laporan Berhasil Diverifikasi & Diubah Menjadi Selesai (Closed)!');
         await fetchReports();
       }
     }
@@ -343,12 +365,13 @@
       }
 
       container.innerHTML = cachedReports.map(r => `
-        <div class="bg-[#0f172a] p-3 rounded-lg border border-slate-700 text-xs space-y-1">
+        <div class="bg-[#0f172a] p-3 rounded-lg border border-slate-700 text-xs space-y-2">
           <div class="flex justify-between items-center">
             <span class="font-bold text-amber-400">${r.category || 'Hazard'}</span>
             <span class="px-2 py-0.5 rounded text-[9px] font-bold ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400':'bg-blue-500/20 text-blue-400'}">${r.risk || 'Low'} Risk</span>
           </div>
           <p class="font-bold text-white text-sm">${r.title || 'Tanpa Judul'}</p>
+          ${r.photo ? `<img src="${r.photo}" class="rounded-lg max-h-32 w-full object-cover border border-slate-800">` : ''}
           <p class="text-slate-300 text-[11px]">${r.desc || '-'}</p>
           <div class="text-[10px] text-slate-400 pt-1 border-t border-slate-800 flex justify-between">
             <span>📍 ${r.location || '-'} (Unit: ${r.unit || '-'})</span>
@@ -381,7 +404,7 @@
       }
 
       feed.innerHTML = cachedReports.map(r => `
-        <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 space-y-2">
+        <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 space-y-3">
           <div class="flex justify-between items-start">
             <div>
               <span class="text-[10px] font-bold px-2 py-0.5 rounded ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400 border border-red-500/30':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400 border border-amber-500/30':'bg-blue-500/20 text-blue-400 border border-blue-500/30'}">${r.risk || 'Low'} Risk</span>
@@ -390,11 +413,18 @@
             </div>
             <span class="px-3 py-1 rounded-full text-xs font-semibold ${r.status==='Selesai'?'bg-emerald-500/20 text-emerald-400':'bg-amber-500/20 text-amber-400'}">${r.status || 'Pending'}</span>
           </div>
-          <p class="text-xs text-slate-300">${r.desc || '-'}</p>
-          <div class="text-xs bg-[#0f172a] p-2.5 rounded border border-slate-800 text-slate-300">
-            <strong>Tindakan Awal Lapangan:</strong> ${r.action || '-'}
+          
+          <div class="flex gap-4 items-start">
+            ${r.photo ? `<img src="${r.photo}" class="w-32 h-24 object-cover rounded-lg border border-slate-700 shrink-0">` : ''}
+            <div class="space-y-2 flex-1">
+              <p class="text-xs text-slate-300">${r.desc || '-'}</p>
+              <div class="text-xs bg-[#0f172a] p-2.5 rounded border border-slate-800 text-slate-300">
+                <strong>Tindakan Awal Lapangan:</strong> ${r.action || '-'}
+              </div>
+            </div>
           </div>
-          <div class="flex justify-between items-center text-[11px] text-slate-400 pt-1">
+
+          <div class="flex justify-between items-center text-[11px] text-slate-400 pt-1 border-t border-slate-800/50">
             <span>📍 Area: ${r.location || '-'} | Unit: ${r.unit || '-'} | Shift: ${r.shift || '-'}</span>
             <span>👷 Pelapor: ${r.reporter || '-'} (${r.company || '-'})</span>
           </div>
@@ -403,15 +433,20 @@
 
       capa.innerHTML = cachedReports.map(r => `
         <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
-          <div>
-            <p class="font-bold text-white text-sm">${r.title || 'Temuan Bahaya'}</p>
-            <p class="text-slate-400">Lokasi: ${r.location || '-'} | Pelapor: ${r.reporter || '-'}</p>
-            <p class="text-[11px] text-amber-400 mt-1">Status Saat Ini: ${r.status || 'Pending Review'}</p>
+          <div class="flex items-center gap-3">
+            ${r.photo ? `<img src="${r.photo}" class="w-12 h-12 rounded object-cover border border-slate-700">` : ''}
+            <div>
+              <p class="font-bold text-white text-sm">${r.title || 'Temuan Bahaya'}</p>
+              <p class="text-slate-400">Lokasi: ${r.location || '-'} | Pelapor: ${r.reporter || '-'}</p>
+              <p class="text-[11px] text-amber-400 mt-0.5">Status: <span class="font-semibold">${r.status || 'Pending Review'}</span></p>
+            </div>
           </div>
-          ${r.status === 'Selesai' 
-            ? `<span class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded font-bold border border-emerald-500/30">✓ Closed</span>`
-            : `<button onclick="markDesktopDone('${r.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded font-bold transition flex items-center gap-1">
-                <i class="fa-solid fa-check"></i> Verifikasi & Closed
+          ${(r.status || '').toLowerCase().includes('selesai') 
+            ? `<span class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded font-bold border border-emerald-500/30 flex items-center gap-1">
+                <i class="fa-solid fa-check-double"></i> ✓ Closed (Selesai)
+               </span>`
+            : `<button onclick="markDesktopDone(${r.id})" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-lg shadow-emerald-600/20 cursor-pointer">
+                <i class="fa-solid fa-check"></i> Verifikasi & Closed (Selesai)
                </button>`
           }
         </div>
