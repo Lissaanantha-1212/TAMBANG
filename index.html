@@ -72,7 +72,7 @@
       <div class="bg-[#1e293b] p-4 border-b border-slate-800 flex justify-between items-center">
         <div>
           <span class="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-500/30">
-            <i class="fa-solid fa-database text-xs mr-1"></i> SUPABASE CONNECTED
+            <i class="fa-solid fa-database text-xs mr-1"></i> SUPABASE LIVE CONNECTED
           </span>
           <h2 class="text-sm font-bold text-white mt-1">E-Hazard Report Mandor</h2>
           <p class="text-[10px] text-slate-400">Pit Central Corridor - Shift 1 (Day)</p>
@@ -89,7 +89,7 @@
             
             <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-xs text-amber-300 flex items-center gap-2">
               <i class="fa-solid fa-triangle-exclamation text-base"></i>
-              <span>Laporan langsung tersimpan di Supabase & tampil di Laptop!</span>
+              <span>Laporan tersimpan otomatis di Supabase & tersinkron ke Laptop!</span>
             </div>
 
             <div class="grid grid-cols-2 gap-2">
@@ -250,24 +250,29 @@
 
   <!-- SCRIPT KONEKSI SUPABASE ENGINE -->
   <script>
-    // KREDENSIAL SUPABASE SAMA SEPERTI DI FITUR SAWIT/BIBIT
+    // KREDENSIAL SUPABASE LANGSUNG DARI CREDENTIALS KAMU
     const SUPABASE_URL = 'https://ztgjmyjrtrlyrgntvtny.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_GGh8txjx_3OFYwmTGdccjQ_zkxRYqep';
-    const TABLE_NAME = 'hse_inspection'; // Sesuaikan dengan nama tabel di Supabase kamu
+    const TABLE_NAME = 'tambang';
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let cachedReports = [];
 
-    // Ambil Data dari Supabase
+    // Ambil Data dari Supabase (Coba urutkan dari ID, jika gagal kembalikan data tanpa order)
     async function fetchReports() {
-      const { data, error } = await supabaseClient
+      let { data, error } = await supabaseClient
         .from(TABLE_NAME)
         .select('*')
         .order('id', { ascending: false });
 
       if (error) {
-        console.error('Error fetching Supabase data:', error.message);
-        return;
+        // Fallback jika primary key bukan id / error sorting
+        const fallback = await supabaseClient.from(TABLE_NAME).select('*');
+        if (fallback.error) {
+          console.error('Error fetching Supabase data:', fallback.error.message);
+          return;
+        }
+        data = fallback.data;
       }
 
       cachedReports = data || [];
@@ -304,7 +309,7 @@
       } else {
         document.getElementById('mobile-hazard-form').reset();
         alert('✅ LAPORAN TERKIRIM KE SUPABASE!');
-        fetchReports();
+        await fetchReports();
         switchMobileTab('history');
       }
 
@@ -312,7 +317,7 @@
       btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE`;
     }
 
-    // Status Closed di Control Room Laptop
+    // Status Closed di Control Room Laptop (Bisa handle String/UUID maupun Integer)
     async function markDesktopDone(reportId) {
       const { error } = await supabaseClient
         .from(TABLE_NAME)
@@ -322,7 +327,8 @@
       if (error) {
         alert('Gagal update status: ' + error.message);
       } else {
-        fetchReports();
+        alert('✅ Status berhasil diubah menjadi Selesai!');
+        await fetchReports();
       }
     }
 
@@ -344,14 +350,14 @@
       container.innerHTML = cachedReports.map(r => `
         <div class="bg-[#0f172a] p-3 rounded-lg border border-slate-700 text-xs space-y-1">
           <div class="flex justify-between items-center">
-            <span class="font-bold text-amber-400">${r.category}</span>
-            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400':'bg-blue-500/20 text-blue-400'}">${r.risk} Risk</span>
+            <span class="font-bold text-amber-400">${r.category || 'Hazard'}</span>
+            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400':'bg-blue-500/20 text-blue-400'}">${r.risk || 'Low'} Risk</span>
           </div>
-          <p class="font-bold text-white text-sm">${r.title}</p>
-          <p class="text-slate-300 text-[11px]">${r.desc}</p>
+          <p class="font-bold text-white text-sm">${r.title || 'Tanpa Judul'}</p>
+          <p class="text-slate-300 text-[11px]">${r.desc || '-'}</p>
           <div class="text-[10px] text-slate-400 pt-1 border-t border-slate-800 flex justify-between">
-            <span>📍 ${r.location} (Unit: ${r.unit})</span>
-            <span class="text-amber-500 font-semibold">${r.status}</span>
+            <span>📍 ${r.location || '-'} (Unit: ${r.unit || '-'})</span>
+            <span class="text-amber-500 font-semibold">${r.status || 'Pending'}</span>
           </div>
         </div>
       `).join('');
@@ -364,9 +370,9 @@
       const elHigh = document.getElementById('dt-stat-high');
 
       if (elTotal) elTotal.innerText = cachedReports.length;
-      if (elPending) elPending.innerText = cachedReports.filter(r => r.status === 'Pending Review').length;
-      if (elDone) elDone.innerText = cachedReports.filter(r => r.status === 'Selesai').length;
-      if (elHigh) elHigh.innerText = cachedReports.filter(r => r.risk === 'Tinggi').length;
+      if (elPending) elPending.innerText = cachedReports.filter(r => (r.status || '').toLowerCase().includes('pending')).length;
+      if (elDone) elDone.innerText = cachedReports.filter(r => (r.status || '').toLowerCase().includes('selesai')).length;
+      if (elHigh) elHigh.innerText = cachedReports.filter(r => (r.risk || '').toLowerCase().includes('tinggi')).length;
 
       const feed = document.getElementById('dt-reports-feed');
       const capa = document.getElementById('dt-capa-table');
@@ -383,19 +389,19 @@
         <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 space-y-2">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400 border border-red-500/30':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400 border border-amber-500/30':'bg-blue-500/20 text-blue-400 border border-blue-500/30'}">${r.risk} Risk</span>
-              <span class="text-xs text-slate-400 ml-2">Category: <strong>${r.category}</strong></span>
-              <h4 class="font-bold text-white text-base mt-1">${r.title}</h4>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400 border border-red-500/30':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400 border border-amber-500/30':'bg-blue-500/20 text-blue-400 border border-blue-500/30'}">${r.risk || 'Low'} Risk</span>
+              <span class="text-xs text-slate-400 ml-2">Category: <strong>${r.category || 'General'}</strong></span>
+              <h4 class="font-bold text-white text-base mt-1">${r.title || 'Temuan Bahaya'}</h4>
             </div>
-            <span class="px-3 py-1 rounded-full text-xs font-semibold ${r.status==='Selesai'?'bg-emerald-500/20 text-emerald-400':'bg-amber-500/20 text-amber-400'}">${r.status}</span>
+            <span class="px-3 py-1 rounded-full text-xs font-semibold ${r.status==='Selesai'?'bg-emerald-500/20 text-emerald-400':'bg-amber-500/20 text-amber-400'}">${r.status || 'Pending'}</span>
           </div>
-          <p class="text-xs text-slate-300">${r.desc}</p>
+          <p class="text-xs text-slate-300">${r.desc || '-'}</p>
           <div class="text-xs bg-[#0f172a] p-2.5 rounded border border-slate-800 text-slate-300">
-            <strong>Tindakan Awal Lapangan:</strong> ${r.action}
+            <strong>Tindakan Awal Lapangan:</strong> ${r.action || '-'}
           </div>
           <div class="flex justify-between items-center text-[11px] text-slate-400 pt-1">
-            <span>📍 Area: ${r.location} | Unit: ${r.unit} | Shift: ${r.shift}</span>
-            <span>👷 Pelapor: ${r.reporter} (${r.company})</span>
+            <span>📍 Area: ${r.location || '-'} | Unit: ${r.unit || '-'} | Shift: ${r.shift || '-'}</span>
+            <span>👷 Pelapor: ${r.reporter || '-'} (${r.company || '-'})</span>
           </div>
         </div>
       `).join('');
@@ -403,12 +409,16 @@
       capa.innerHTML = cachedReports.map(r => `
         <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
           <div>
-            <p class="font-bold text-white text-sm">${r.title}</p>
-            <p class="text-slate-400">Lokasi: ${r.location} | Pelapor: ${r.reporter}</p>
+            <p class="font-bold text-white text-sm">${r.title || 'Temuan Bahaya'}</p>
+            <p class="text-slate-400">Lokasi: ${r.location || '-'} | Pelapor: ${r.reporter || '-'}</p>
+            <p class="text-[11px] text-amber-400 mt-1">Status Saat Ini: ${r.status || 'Pending Review'}</p>
           </div>
-          <button onclick="markDesktopDone(${r.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded font-bold transition">
-            Verifikasi & Closed (Selesai)
-          </button>
+          ${r.status === 'Selesai' 
+            ? `<span class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded font-bold border border-emerald-500/30">✓ Closed</span>`
+            : `<button onclick="markDesktopDone('${r.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded font-bold transition flex items-center gap-1">
+                <i class="fa-solid fa-check"></i> Verifikasi & Closed
+               </button>`
+          }
         </div>
       `).join('');
     }
@@ -456,14 +466,14 @@
       document.getElementById('dt-btn-' + tab).classList.add('active');
     }
 
-    // Auto Listening Supabase Realtime Channel
+    // Auto Listening Supabase Realtime Broadcast Channel
     document.addEventListener("DOMContentLoaded", function() {
       fetchReports();
 
       supabaseClient
-        .channel('schema-db-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, () => {
-          fetchReports(); // Otomatis refresh begitu ada insert/update baru di HP
+        .channel('public:' + TABLE_NAME)
+        .on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, (payload) => {
+          fetchReports();
         })
         .subscribe();
     });
