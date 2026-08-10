@@ -20,8 +20,6 @@
       background-color: #0b0f19;
       color: #e2e8f0;
     }
-    .page-section { display: none; }
-    .page-section.active { display: block; }
     
     .nav-btn-dt.active {
       background-color: #1e293b;
@@ -116,10 +114,10 @@
               <input type="text" id="m-title" required placeholder="Misal: Tangga Excavator PC2000 Retak" class="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-amber-500 outline-none">
             </div>
 
-            <!-- FITUR FOTO BUKTI LAPANGAN -->
-            <div>
-              <label class="block text-[11px] font-semibold text-amber-400 mb-1"><i class="fa-solid fa-camera mr-1"></i> Foto Bukti Temuan Bahaya</label>
-              <input type="file" id="m-photo" accept="image/*" onchange="previewPhoto(event)" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500/20 file:text-amber-400 hover:file:bg-amber-500/30">
+            <!-- FITUR FOTO BUKTI -->
+            <div class="bg-[#1e293b] p-3 rounded-lg border border-amber-500/40">
+              <label class="block text-[11px] font-bold text-amber-400 mb-1.5"><i class="fa-solid fa-camera text-sm mr-1"></i> Foto Bukti Lapangan</label>
+              <input type="file" id="m-photo" accept="image/*" onchange="previewPhoto(event)" class="w-full text-xs text-slate-300 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-black hover:file:bg-amber-400 cursor-pointer">
               <div id="photo-preview-container" class="mt-2 hidden">
                 <img id="photo-preview" src="" class="max-h-36 rounded-lg border border-slate-700 object-cover w-full">
               </div>
@@ -166,7 +164,7 @@
               </div>
             </div>
 
-            <button type="submit" id="btn-submit" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-extrabold py-3 rounded-lg text-xs transition shadow-lg shadow-amber-500/20 uppercase tracking-wider flex items-center justify-center gap-2">
+            <button type="submit" id="btn-submit" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-extrabold py-3 rounded-lg text-xs transition shadow-lg shadow-amber-500/20 uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
               <i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE
             </button>
 
@@ -326,7 +324,7 @@
         document.getElementById('mobile-hazard-form').reset();
         document.getElementById('photo-preview-container').classList.add('hidden');
         photoBase64 = null;
-        alert('✅ LAPORAN & FOTO TERKIRIM KE SUPABASE!');
+        alert('✅ LAPORAN TERKIRIM KE SUPABASE!');
         await fetchReports();
         switchMobileTab('history');
       }
@@ -335,17 +333,20 @@
       btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> KIRIM LAPORAN ONLINE`;
     }
 
-    // FIX TOMBOL VERIFIKASI
+    // FUNGSI FIX TOMBOL VERIFIKASI (MENGGUNAKAN ID DENGAN AMAN)
     async function markDesktopDone(reportId) {
-      const { error } = await supabaseClient
+      console.log("Mengubah status id:", reportId);
+      
+      const { data, error } = await supabaseClient
         .from(TABLE_NAME)
         .update({ status: 'Selesai' })
-        .eq('id', reportId);
+        .eq('id', reportId)
+        .select();
 
       if (error) {
         alert('Gagal verifikasi laporan: ' + error.message);
       } else {
-        alert('✅ Laporan Berhasil Diverifikasi & Diubah Menjadi Selesai (Closed)!');
+        alert('✅ Laporan Berhasil Diverifikasi & Diubah Menjadi Selesai!');
         await fetchReports();
       }
     }
@@ -371,7 +372,7 @@
             <span class="px-2 py-0.5 rounded text-[9px] font-bold ${r.risk==='Tinggi'?'bg-red-500/20 text-red-400':r.risk==='Sedang'?'bg-amber-500/20 text-amber-400':'bg-blue-500/20 text-blue-400'}">${r.risk || 'Low'} Risk</span>
           </div>
           <p class="font-bold text-white text-sm">${r.title || 'Tanpa Judul'}</p>
-          ${r.photo ? `<img src="${r.photo}" class="rounded-lg max-h-32 w-full object-cover border border-slate-800">` : ''}
+          ${r.photo ? `<img src="${r.photo}" class="rounded-lg max-h-36 w-full object-cover border border-slate-800">` : ''}
           <p class="text-slate-300 text-[11px]">${r.desc || '-'}</p>
           <div class="text-[10px] text-slate-400 pt-1 border-t border-slate-800 flex justify-between">
             <span>📍 ${r.location || '-'} (Unit: ${r.unit || '-'})</span>
@@ -431,26 +432,29 @@
         </div>
       `).join('');
 
-      capa.innerHTML = cachedReports.map(r => `
-        <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
-          <div class="flex items-center gap-3">
-            ${r.photo ? `<img src="${r.photo}" class="w-12 h-12 rounded object-cover border border-slate-700">` : ''}
-            <div>
-              <p class="font-bold text-white text-sm">${r.title || 'Temuan Bahaya'}</p>
-              <p class="text-slate-400">Lokasi: ${r.location || '-'} | Pelapor: ${r.reporter || '-'}</p>
-              <p class="text-[11px] text-amber-400 mt-0.5">Status: <span class="font-semibold">${r.status || 'Pending Review'}</span></p>
+      capa.innerHTML = cachedReports.map(r => {
+        const isDone = (r.status || '').toLowerCase().includes('selesai');
+        return `
+          <div class="bg-[#1e293b] p-4 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
+            <div class="flex items-center gap-3">
+              ${r.photo ? `<img src="${r.photo}" class="w-12 h-12 rounded object-cover border border-slate-700">` : ''}
+              <div>
+                <p class="font-bold text-white text-sm">${r.title || 'Temuan Bahaya'}</p>
+                <p class="text-slate-400">Lokasi: ${r.location || '-'} | Pelapor: ${r.reporter || '-'}</p>
+                <p class="text-[11px] text-amber-400 mt-0.5">Status: <span class="font-semibold">${r.status || 'Pending Review'}</span></p>
+              </div>
             </div>
+            ${isDone 
+              ? `<span class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded font-bold border border-emerald-500/30 flex items-center gap-1">
+                  <i class="fa-solid fa-check-double"></i> ✓ Closed (Selesai)
+                 </span>`
+              : `<button type="button" onclick="markDesktopDone('${r.id}')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-lg shadow-emerald-600/20 cursor-pointer">
+                  <i class="fa-solid fa-check"></i> Verifikasi & Closed (Selesai)
+                 </button>`
+            }
           </div>
-          ${(r.status || '').toLowerCase().includes('selesai') 
-            ? `<span class="bg-emerald-500/20 text-emerald-400 px-3 py-1.5 rounded font-bold border border-emerald-500/30 flex items-center gap-1">
-                <i class="fa-solid fa-check-double"></i> ✓ Closed (Selesai)
-               </span>`
-            : `<button onclick="markDesktopDone(${r.id})" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-lg shadow-emerald-600/20 cursor-pointer">
-                <i class="fa-solid fa-check"></i> Verifikasi & Closed (Selesai)
-               </button>`
-          }
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function setAppMode(mode) {
